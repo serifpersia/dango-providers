@@ -1,10 +1,10 @@
 # dango-providers
 
-Remote streaming-provider repository for [Dango](https://github.com/serifpersia/dango).
+Remote streaming-provider repository for [dango](https://github.com/serifpersia/dango).
 
-Dango fetches `registry.json` from here, verifies each entry's `sha256`,
+dango fetches `registry.json` from here, verifies each entry's `sha256`,
 and loads the provider modules (`.mjs`). Updating or fixing a provider
-means pushing to this repo — no Dango release needed.
+means pushing to this repo — no dango release needed.
 
 ## Layout
 
@@ -63,7 +63,7 @@ export default function createProvider(ctx) {
 }
 ```
 
-The factory may only use `ctx` — no Dango imports, no Node builtins:
+The factory may only use `ctx` — no dango imports, no Node builtins:
 
 - `ctx.cache.get(key)` / `ctx.cache.set(key, value, ttlSeconds?)`
 - `ctx.logger.{info,warn,error,debug}(obj, msg?)`

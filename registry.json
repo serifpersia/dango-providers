@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-17T00:00:00Z",
+  "providers": [
+    {
+      "id": "kaa",
+      "label": "KAA",
+      "version": "1.0.0",
+      "entry": "providers/kaa-1.0.0.mjs",
+      "sha256": "08c997309251ca48bbeb2a4fc34c6bada87630433a1878559d3411ebc68c0f5e",
+      "mature": false,
+      "sub": "soft",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    }
+  ]
+}
