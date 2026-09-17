@@ -50,13 +50,13 @@ export default function createProvider(ctx) {
       .trim()
   }
 
-  function scoreCandidate(slug, text, query) {
+  function scoreCandidate(slug, texts, query) {
     const q = normalizeTitle(query)
-    const t = normalizeTitle(text)
     const s = normalizeTitle(slug.replace(/-/g, ' '))
     if (!q) return -1
     let score = -1
-    for (const cand of [t, s]) {
+    for (const raw of [...texts, s]) {
+      const cand = normalizeTitle(raw)
       if (!cand) continue
       if (cand === q) score = Math.max(score, 3)
       else if (cand.startsWith(q) || q.startsWith(cand)) score = Math.max(score, 2)
@@ -141,8 +141,18 @@ export default function createProvider(ctx) {
         const href = attr(tag, 'href')
         const slug = href.match(/^\/series\/([^/?#]+)/)?.[1]
         if (!slug) continue
-        const strong = m[0].match(/<strong[^>]*>([\s\S]*?)<\/strong>/i)?.[1]
-        results.push({ slug, text: strong ? stripTags(strong) : slug.replace(/-/g, ' ') })
+        const heading =
+          m[0].match(/<h2[^>]*>([\s\S]*?)<\/h2>/i)?.[1] ??
+          m[0].match(/<strong[^>]*>([\s\S]*?)<\/strong>/i)?.[1] ??
+          ''
+        const altRaw = m[0].match(/Alt Titles\s*:([\s\S]*?)<\/div>/i)?.[1] ?? ''
+        const texts = [stripTags(heading)]
+        for (const alt of stripTags(altRaw).split(/;/)) {
+          const t = alt.trim()
+          if (t) texts.push(t)
+        }
+        if (!texts.some((t) => t)) texts.push(slug.replace(/-/g, ' '))
+        results.push({ slug, texts })
       }
     }
     cache.set(cacheKey, results, 86400)
@@ -156,7 +166,7 @@ export default function createProvider(ctx) {
       let best = candidates[0]
       let bestScore = -1
       for (const c of candidates) {
-        const score = scoreCandidate(c.slug, c.text, title)
+        const score = scoreCandidate(c.slug, c.texts ?? [c.text], title)
         if (score > bestScore) {
           bestScore = score
           best = c

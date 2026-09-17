@@ -11,7 +11,10 @@ means pushing to this repo — no dango release needed.
 ```text
 registry.json
 providers/
-  <id>-<version>.mjs
+  anime/    video providers (animegg-1.0.1.mjs, ...)
+  manga/    manga providers (mangadex-1.0.0.mjs, ...)
+  asmr/     audio providers (jasmr-1.0.0.mjs)
+  tv/       tv providers (later)
 ```
 
 ## registry.json
