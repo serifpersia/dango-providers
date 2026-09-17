@@ -82,6 +82,38 @@ The factory may only use `ctx` — no dango imports, no Node builtins:
 Bump `version`, the filename, `registry.json: version`, and `sha256`
 together on every change.
 
+## probe.mjs
+
+Manual end-to-end test for every registry entry (dango itself does no
+runtime testing — fetch, verify, register only):
+
+```sh
+node probe.mjs --list
+node probe.mjs                          # all providers
+node probe.mjs animegg kaa --title "Solo Leveling"
+node probe.mjs animepahe                # prompts for UA + cookie
+node probe.mjs animepahe --ua "..." --cookie "..."
+node probe.mjs mangadex --title "Naruto"
+node probe.mjs wh --title "<some title>"
+```
+
+Options: `[ids...]`, `--title`, `--episode N`, `--mode sub|dub`,
+`--ua`, `--cookie`, `--timeout MS`, `--json`. Exit code is 1 on any
+`FAIL`/`AUTH`.
+
+Statuses: `PASS` | `FAIL` (+ reason) | `SKIP` (no results — rerun with a
+better `--title`, e.g. mature providers) | `AUTH` (site demands a cookie).
+
+Notes:
+
+- The probe mirrors dango's host context (cache, `fetchText`/`fetchJson`,
+  AniList, Kitsu `idMal` lookup, per-request UA/cookie store, AES/HMAC
+  helpers, system `curl`, `proxyUrl`). Two deliberate differences:
+  `scraping.fetch` is plain `fetch` (no got-scraping fingerprints) and
+  the title matcher is a compact equivalent of dango's `title-matching`.
+- `cheerio` is loaded lazily and only needed for `animepahe`/`animeya`:
+  `npm install cheerio`.
+
 `sha256` must be computed over the exact bytes GitHub serves, which are
 the LF-normalized blob bytes (enforced by `.gitattributes`). If your
 editor writes CRLF, convert to LF first, then hash — hashing a CRLF
