@@ -99,10 +99,11 @@ node probe.mjs wh --title "<some title>"
 
 Options: `[ids...]`, `--title`, `--episode N`, `--mode sub|dub`,
 `--ua`, `--cookie`, `--timeout MS`, `--json`. Exit code is 1 on any
-`FAIL`/`AUTH`.
+`FAIL`/`AUTH`/`RATE-LIMITED`.
 
 Statuses: `PASS` | `FAIL` (+ reason) | `SKIP` (no results — rerun with a
-better `--title`, e.g. mature providers) | `AUTH` (site demands a cookie).
+better `--title`, e.g. mature providers) | `AUTH` (site demands a cookie)
+| `RATE-LIMITED` (back off and rerun).
 
 Notes:
 

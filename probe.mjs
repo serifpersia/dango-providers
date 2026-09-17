@@ -9,8 +9,9 @@
 //   node probe.mjs animepahe --ua "..." --cookie "..."
 //
 // Statuses: PASS | FAIL | SKIP (nothing found, needs manual --title) |
-// AUTH (site demands cookie, rerun with --cookie).
-// Exit code is 1 when any provider FAILs or needs AUTH.
+// AUTH (site demands cookie, rerun with --cookie) |
+// RATE-LIMITED (back off and rerun).
+// Exit code is 1 when any provider FAILs, needs AUTH, or is RATE-LIMITED.
 // No dependencies. cheerio is loaded lazily and only required when a
 // tested provider calls ctx.cheerio (animepahe, animeya):
 //   npm install cheerio
@@ -51,6 +52,9 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 opts.mode = opts.mode === 'dub' ? 'dub' : 'sub'
+if (process.env.PROBE_DEBUG) {
+  console.error(`[debug] ua=${opts.ua ? `len=${opts.ua.length}` : 'MISSING'} cookie=${opts.cookie ? `len=${opts.cookie.length}` : 'MISSING'} title=${opts.title}`)
+}
 
 const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'registry.json'), 'utf8'))
 
@@ -82,6 +86,8 @@ if (wanted.some((p) => p.id === 'animepahe') && !opts.cookie && process.stdin.is
 }
 
 let cheerioMod = null
+let gotScrapingMod = null
+let gotScrapingTried = false
 async function getCheerio() {
   if (!cheerioMod) {
     try {
@@ -91,6 +97,21 @@ async function getCheerio() {
     }
   }
   return cheerioMod
+}
+async function getGotScraping() {
+  if (!gotScrapingTried) {
+    gotScrapingTried = true
+    try {
+      const m = await import('got-scraping')
+      gotScrapingMod = m.gotScraping ?? m.default ?? null
+    } catch {
+      gotScrapingMod = null
+    }
+    if (!gotScrapingMod) {
+      console.log('  [note] got-scraping not installed, plain fetch may fail Cloudflare (npm install got-scraping)')
+    }
+  }
+  return gotScrapingMod
 }
 
 function normalizeTitle(s) {
@@ -256,8 +277,30 @@ function makeCtx() {
     },
     scraping: {
       fetch: async (urlOrOptions, maybeOptions) => {
+        const gs = await getGotScraping()
+        if (process.env.PROBE_DEBUG) {
+          console.error(`[debug] scraping via ${gs ? 'got-scraping' : 'plain-fetch'}: ${typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions.url}`)
+        }
+        if (gs) {
+          const res =
+            typeof urlOrOptions === 'string'
+              ? await gs(urlOrOptions, {
+                  method: 'GET',
+                  responseType: 'text',
+                  throwHttpErrors: false,
+                  ...(maybeOptions ?? {}),
+                })
+              : await gs({ responseType: 'text', throwHttpErrors: false, ...urlOrOptions })
+          if (process.env.PROBE_DEBUG) {
+            console.error(`[debug] scraping status: ${res.statusCode}`)
+          }
+          return { statusCode: res.statusCode, body: String(res.body ?? ''), headers: res.headers }
+        }
         const o = typeof urlOrOptions === 'string' ? { url: urlOrOptions, ...(maybeOptions ?? {}) } : urlOrOptions
         const res = await timedFetch(o.url, { method: o.method ?? 'GET', headers: o.headers })
+        if (process.env.PROBE_DEBUG) {
+          console.error(`[debug] plain status: ${res.status}`)
+        }
         return { statusCode: res.status, body: await res.text(), headers: Object.fromEntries(res.headers) }
       },
     },
@@ -375,6 +418,8 @@ for (const entry of wanted) {
   } catch (e) {
     if (isAuthError(e)) {
       results.push({ id: entry.id, version: entry.version, status: 'AUTH', notes: ['site demands cookie — rerun with --cookie (and --ua)'] })
+    } else if (String(e?.message ?? e).startsWith('HTTP 429')) {
+      results.push({ id: entry.id, version: entry.version, status: 'RATE-LIMITED', notes: ['site throttled the probe — wait a minute and rerun'] })
     } else {
       results.push(fail(`${e?.message ?? e}`))
     }
@@ -393,4 +438,4 @@ if (opts.json) {
   for (const r of results) counts[r.status] = (counts[r.status] ?? 0) + 1
   console.log(`\n${results.length} tested: ` + Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(', '))
 }
-process.exit(results.some((r) => r.status === 'FAIL' || r.status === 'AUTH') ? 1 : 0)
+process.exit(results.some((r) => r.status === 'FAIL' || r.status === 'AUTH' || r.status === 'RATE-LIMITED') ? 1 : 0)

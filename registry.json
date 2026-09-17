@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -77,9 +77,9 @@
     {
       "id": "animepahe",
       "label": "AnimePahe",
-      "version": "1.0.0",
-      "entry": "providers/anime/animepahe-1.0.0.mjs",
-      "sha256": "ec349867e3d6fda343b6d929020a3fb17d8b4745faa2dbb9dcf587d6ee974ea1",
+      "version": "1.0.1",
+      "entry": "providers/anime/animepahe-1.0.1.mjs",
+      "sha256": "8cd812d413f21f5952a1a5491a38f11761b71adf92318e4b1cceb8784fc55feb",
       "mature": false,
       "sub": "hard",
       "tier": "cookie",
