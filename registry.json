@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -175,6 +175,26 @@
       "mature": false,
       "kind": "asmr",
       "tier": "direct",
+      "enabledByDefault": true
+    },
+    {
+      "id": "mangadex",
+      "label": "MangaDex",
+      "version": "1.0.0",
+      "entry": "providers/mangadex-1.0.0.mjs",
+      "sha256": "e5525559b88eb5ce8f90b58727ddde3e1d152bdbda1584af97ca101e95f27be1",
+      "mature": false,
+      "kind": "manga",
+      "enabledByDefault": true
+    },
+    {
+      "id": "mangapill",
+      "label": "MangaPill",
+      "version": "1.0.0",
+      "entry": "providers/mangapill-1.0.0.mjs",
+      "sha256": "4f5ff5997af61061242fd7a2fe781357079837defe978f90673176997e97a8d4",
+      "mature": false,
+      "kind": "manga",
       "enabledByDefault": true
     }
   ]
