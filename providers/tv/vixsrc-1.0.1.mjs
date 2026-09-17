@@ -7,9 +7,7 @@ const HEADERS = {
   Origin: BASE_URL,
 }
 
-export default function createProvider(ctx) {
-  const log = ctx.logger
-
+export default function createProvider() {
   async function getSources(media) {
     const numericTmdbId = Number(media.tmdbId)
     if (!numericTmdbId) return null
@@ -70,8 +68,7 @@ export default function createProvider(ctx) {
         }
       }
       return { sources, audioTracks, subtitles, referer: pageUrl }
-    } catch (err) {
-      log.debug({ err: String(err), tmdbId: media.tmdbId }, 'vixsrc sources failed')
+    } catch {
       return null
     }
   }

@@ -106,7 +106,6 @@ function decodeMovyPayload(e, t, a) {
 }
 
 export default function createProvider(ctx) {
-  const log = ctx.logger
   const seedCache = new Map()
   const inflightSeeds = new Map()
 
@@ -134,8 +133,7 @@ export default function createProvider(ctx) {
           const cached = seedCache.get(key)
           if (cached) return cached.seed
         }
-      } catch (err) {
-        log.debug({ err: String(err), mediaId }, 'movybz seed fetch failed')
+      } catch {
         const cached = seedCache.get(key)
         if (cached) return cached.seed
       } finally {

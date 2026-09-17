@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -200,9 +200,9 @@
     {
       "id": "movybz",
       "label": "Movy.bz (4K HLS)",
-      "version": "1.0.0",
-      "entry": "providers/tv/movybz-1.0.0.mjs",
-      "sha256": "0e9091759a0f46d0201e80c101a7bb376aeeab60fdad2bebcf7292e0029a3e2f",
+      "version": "1.0.1",
+      "entry": "providers/tv/movybz-1.0.1.mjs",
+      "sha256": "3dce04649fccf38fef7a5c2016ab55e3e04951c3bb75479bc84d07f8d7f652a3",
       "mature": false,
       "kind": "tv",
       "tier": "direct",
@@ -211,9 +211,9 @@
     {
       "id": "vixsrc",
       "label": "VixSrc (HLS)",
-      "version": "1.0.0",
-      "entry": "providers/tv/vixsrc-1.0.0.mjs",
-      "sha256": "747cafe305d72b1f5aa64813e91e890f9a3263352a49a54ae7fd22a715fcd97b",
+      "version": "1.0.1",
+      "entry": "providers/tv/vixsrc-1.0.1.mjs",
+      "sha256": "7bdbcb6de9c359946dfc6369e4fd40de102baf7b16691da52c5ad23befcd6c5e",
       "mature": false,
       "kind": "tv",
       "tier": "direct",
