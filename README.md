@@ -81,3 +81,11 @@ The factory may only use `ctx` — no dango imports, no Node builtins:
 
 Bump `version`, the filename, `registry.json: version`, and `sha256`
 together on every change.
+
+`sha256` must be computed over the exact bytes GitHub serves, which are
+the LF-normalized blob bytes (enforced by `.gitattributes`). If your
+editor writes CRLF, convert to LF first, then hash — hashing a CRLF
+working copy produces a digest that will never match. Never use
+PowerShell `>` redirection when extracting files for hashing (it
+re-encodes to UTF-16); hash with `Get-FileHash` on the LF file or
+`git cat-file` piped inside node, never through the shell.
