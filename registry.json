@@ -1,7 +1,55 @@
 {
-  "version": 1,
+  "version": 2,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
+    {
+      "id": "megaplay",
+      "label": "MegaPlay",
+      "version": "1.0.0",
+      "entry": "providers/megaplay-1.0.0.mjs",
+      "sha256": "230f010ff34c1819df1ca3fa6eeef9cce1ae3fec3d30bc48debbf1a42234c2dc",
+      "mature": false,
+      "sub": "soft",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "justanime",
+      "label": "JustAnime",
+      "version": "1.0.0",
+      "entry": "providers/justanime-1.0.0.mjs",
+      "sha256": "7e1a7687c671ae6c1b3044a25a6a5fd935f18a9b6d5502dc82b88475e350a9d3",
+      "mature": false,
+      "sub": "mixed",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "anibd",
+      "label": "AniBD",
+      "version": "1.0.0",
+      "entry": "providers/anibd-1.0.0.mjs",
+      "sha256": "59155577bf29bf10612506b4aea530dd366f273b6db96f01810bbb0fcd8b8652",
+      "mature": false,
+      "sub": "hard",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "animegg",
+      "label": "AnimeGG",
+      "version": "1.0.0",
+      "entry": "providers/animegg-1.0.0.mjs",
+      "sha256": "be5e46ffbc011e1d463b8cabd5f951b98414a4a713eef2a681c253ce37db397b",
+      "mature": false,
+      "sub": "hard",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
     {
       "id": "kaa",
       "label": "KAA",
@@ -12,6 +60,120 @@
       "sub": "soft",
       "tier": "direct",
       "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "anilight",
+      "label": "Anilight",
+      "version": "1.0.0",
+      "entry": "providers/anilight-1.0.0.mjs",
+      "sha256": "c10e87b81225ac4bdf1dc9bebdc7d481c0ba33339e720c5e7c5d1bb2ec5bac2e",
+      "mature": false,
+      "sub": "mixed",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "animepahe",
+      "label": "AnimePahe",
+      "version": "1.0.0",
+      "entry": "providers/animepahe-1.0.0.mjs",
+      "sha256": "ec349867e3d6fda343b6d929020a3fb17d8b4745faa2dbb9dcf587d6ee974ea1",
+      "mature": false,
+      "sub": "hard",
+      "tier": "cookie",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "animeya",
+      "label": "Animeya",
+      "version": "1.0.0",
+      "entry": "providers/animeya-1.0.0.mjs",
+      "sha256": "0b1fd96ecd189d2f2364929970d325fb15e6811cb7ada611a483faeef1047919",
+      "mature": false,
+      "sub": "mixed",
+      "tier": "embed",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "123anime",
+      "label": "123Anime",
+      "version": "1.0.0",
+      "entry": "providers/123anime-1.0.0.mjs",
+      "sha256": "fe63fbadcf099c68f9f20cce260b4a30d51493d851828e0a240ca304026797df",
+      "mature": false,
+      "sub": "hard",
+      "tier": "embed",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "animedunya",
+      "label": "AnimeDunya",
+      "version": "1.0.0",
+      "entry": "providers/animedunya-1.0.0.mjs",
+      "sha256": "6b044c60f025544fd1a0d8a2ec7c2282cbce7bb274258235fe565c4f0ac19f51",
+      "mature": false,
+      "sub": "soft",
+      "tier": "embed",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "wh",
+      "label": "WH",
+      "version": "1.0.0",
+      "entry": "providers/wh-1.0.0.mjs",
+      "sha256": "69680533987f21b1d16d970993929d23dfea12efbdf5ca9fc46ea8e0b0648c55",
+      "mature": true,
+      "tier": "direct",
+      "modes": ["sub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "hn",
+      "label": "HN",
+      "version": "1.0.0",
+      "entry": "providers/hn-1.0.0.mjs",
+      "sha256": "feb39d383e71c959796087b7836a26ec47397cb4de3dc23fa231327a0b80b26b",
+      "mature": true,
+      "tier": "direct",
+      "modes": ["sub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "ht",
+      "label": "HT",
+      "version": "1.0.0",
+      "entry": "providers/ht-1.0.0.mjs",
+      "sha256": "f85334b99ea16414b0b8d683089c7ef79838a78c560aafd6514e40aec3d6d2ab",
+      "mature": true,
+      "tier": "direct",
+      "modes": ["sub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "op",
+      "label": "OP",
+      "version": "1.0.0",
+      "entry": "providers/op-1.0.0.mjs",
+      "sha256": "22f596febbffd068ef386e16dc672bc7fa3084a687e05ddb23ca8a30733f1b74",
+      "mature": true,
+      "tier": "direct",
+      "modes": ["sub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "jasmr",
+      "label": "JAsmr",
+      "version": "1.0.0",
+      "entry": "providers/jasmr-1.0.0.mjs",
+      "sha256": "2160da1a09b7946c9eca5b67deb210d16ff233f1ea9ce95e3bdea5f698d7d81b",
+      "mature": false,
+      "tier": "direct",
       "enabledByDefault": true
     }
   ]
