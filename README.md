@@ -44,10 +44,12 @@ providers/
 - `entry`: absolute `https://` URL or path relative to `registry.json`.
 - `sha256`: hex digest of the exact `.mjs` bytes. Required.
 - `mature`: adult-only provider (shown only for adult titles).
-- `kind`: `anime` (default), `asmr`, or `manga`. Non-anime providers are
-  hidden from the anime player dropdown but still served by their own
-  routes. Manga modules implement
+- `kind`: `anime` (default), `asmr`, `manga`, or `tv`. Non-anime
+  providers are hidden from the anime player dropdown but still served
+  by their own routes. Manga modules implement
   `search/getDetail/getChapters/getPages` instead of the video shape.
+  TV modules implement `getSources(media, server?)` (direct) and/or
+  `getEmbedUrl(media)` (embed), keyed by TMDB id — see below.
 - `sub`: `soft | hard | mixed` subtitle type (omit for mature providers).
 - `tier`: `direct | embed | cookie`.
 - `modes`: subset of `["sub", "dub"]` (defaults to both).
@@ -70,12 +72,37 @@ export default function createProvider(ctx) {
 }
 ```
 
+TV modules (`kind: "tv"`, in `providers/tv/`) resolve streams by TMDB
+id instead of searching. `media` is
+`{ tmdbId, type: 'movie'|'tv', season, episode, title, year, imdbId,
+totalSeasons }` (metadata backfilled by the route, never pass the TMDB
+key — use `ctx.tmdb.get(path)` if you need more):
+
+```js
+export default function createProvider(ctx) {
+  return {
+    name: 'movybz',
+    servers: ['miami', 'dallas'], // optional: tried in order, or the ?server= pick
+    getSources: async (media, server) => ({
+      sources: [{ url, quality, type: 'hls' }],
+      audioTracks: [{ language, label }],
+      subtitles: [{ language, label, url }], // optional
+      referer: 'https://…', // optional, used for proxied playback
+      server, // which server answered
+    }),
+    getEmbedUrl: async (media) => 'https://…', // embed tier instead
+  }
+}
+```
+
 The factory may only use `ctx` — no dango imports, no Node builtins:
 
 - `ctx.cache.get(key)` / `ctx.cache.set(key, value, ttlSeconds?)`
 - `ctx.logger.{info,warn,error,debug}(obj, msg?)`
 - `ctx.fetchText(url, init?)` → `string | null`
 - `ctx.fetchJson(url, init?)` → parsed JSON (throws on HTTP error)
+- `ctx.tmdb.get(path)` → TMDB JSON or `null` (key handled server-side);
+  `ctx.tmdb.base` / `ctx.tmdb.image` are the API/image roots
 - `ctx.proxyUrl(rawUrl, referer)` → `/api/proxy?...` URL
 - `ctx.userAgent`
 
@@ -95,11 +122,17 @@ node probe.mjs animepahe                # prompts for UA + cookie
 node probe.mjs animepahe --ua "..." --cookie "..."
 node probe.mjs mangadex --title "Naruto"
 node probe.mjs wh --title "<some title>"
+node probe.mjs movybz --title "Breaking Bad" --type tv --season 1 --episode 1
+node probe.mjs vixsrc --tmdb 27205 --type movie
+node probe.mjs embedmaster --tmdb 1396 --type tv
 ```
 
 Options: `[ids...]`, `--title`, `--episode N`, `--mode sub|dub`,
-`--ua`, `--cookie`, `--timeout MS`, `--json`. Exit code is 1 on any
-`FAIL`/`AUTH`/`RATE-LIMITED`.
+`--ua`, `--cookie`, `--timeout MS`, `--json`, plus TV-only `--tmdb ID`
+(skip title lookup), `--type movie|tv`, `--season N`, `--server NAME`
+(direct multi-server providers like movybz). TV lookup needs a TMDB key:
+set `TMDB_API_KEY` or it falls back to a public dev key. Exit code is 1
+on any `FAIL`/`AUTH`/`RATE-LIMITED`.
 
 Statuses: `PASS` | `FAIL` (+ reason) | `SKIP` (no results — rerun with a
 better `--title`, e.g. mature providers) | `AUTH` (site demands a cookie)

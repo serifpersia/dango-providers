@@ -1,12 +1,16 @@
 // Manual provider probe for dango-providers. Tests registry entries end to end:
-// search -> resolve -> episodes -> streams (video) or
-// search -> detail -> chapters -> pages (manga).
+// search -> resolve -> episodes -> streams (video),
+// search -> detail -> chapters -> pages (manga), or
+// tmdb lookup -> getSources / getEmbedUrl (tv).
 //
 // Usage:
 //   node probe.mjs [ids...] [options]
 //   node probe.mjs --list
 //   node probe.mjs animegg kaa --title "Solo Leveling"
 //   node probe.mjs animepahe --ua "..." --cookie "..."
+//   node probe.mjs movybz --title "Breaking Bad" --type tv --season 1 --episode 1
+//   node probe.mjs vixsrc --tmdb 27205 --type movie
+//   node probe.mjs embedmaster --tmdb 1396 --type tv --season 1 --episode 1
 //
 // Statuses: PASS | FAIL | SKIP (nothing found, needs manual --title) |
 // AUTH (site demands cookie, rerun with --cookie) |
@@ -44,6 +48,14 @@ for (let i = 0; i < args.length; i++) {
   else if (a === '--cookie') opts.cookie = args[++i]
   else if (a.startsWith('--timeout=')) opts.timeout = Number(a.slice(10))
   else if (a === '--timeout') opts.timeout = Number(args[++i])
+  else if (a.startsWith('--tmdb=')) opts.tmdb = a.slice(7)
+  else if (a === '--tmdb') opts.tmdb = args[++i]
+  else if (a.startsWith('--type=')) opts.mediaType = a.slice(7)
+  else if (a === '--type') opts.mediaType = args[++i]
+  else if (a.startsWith('--season=')) opts.season = a.slice(9)
+  else if (a === '--season') opts.season = args[++i]
+  else if (a.startsWith('--server=')) opts.server = a.slice(9)
+  else if (a === '--server') opts.server = args[++i]
   else if (a.startsWith('--')) {
     console.error(`unknown flag ${a}`)
     process.exit(2)
@@ -229,6 +241,9 @@ function base64UrlEncode(input) {
 }
 
 function makeCtx() {
+  const TMDB_BASE = 'https://api.themoviedb.org/3'
+  const TMDB_IMAGE = 'https://image.tmdb.org/t/p'
+  const tmdbKey = process.env.TMDB_API_KEY || '9e7096a7575623aa30c66e9cc987e411'
   const store = new Map()
   const headers = { ua: opts.ua, cookie: opts.cookie, jasmr_ua: opts.ua, jasmr_cookie: opts.cookie }
   const timedFetch = (url, init) =>
@@ -268,6 +283,20 @@ function makeCtx() {
     titleMatch: { buildQueryVariants, pickBestMatch },
     anilist: { request: anilistRequest, parseMalId, searchByTitle: searchAnilistByTitle },
     kitsu: { metaByAnilistId: kitsuMetaByAnilistId },
+    tmdb: {
+      base: TMDB_BASE,
+      image: TMDB_IMAGE,
+      get: async (tmdbPath) => {
+        try {
+          const sep = tmdbPath.includes('?') ? '&' : '?'
+          const res = await timedFetch(`${TMDB_BASE}${tmdbPath}${sep}api_key=${tmdbKey}`)
+          if (!res.ok) return null
+          return res.json()
+        } catch {
+          return null
+        }
+      },
+    },
     request: { get: (key) => headers[key] },
     cookies: { sanitizeCfClearance, buildCfClearanceCookie },
     crypto: {
@@ -385,6 +414,51 @@ async function testManga(p, factory) {
   return { status: 'PASS', notes }
 }
 
+async function testTv(p, factory) {
+  const notes = []
+  const ctx = makeCtx()
+  let tmdbId = opts.tmdb ? Number(opts.tmdb) : 0
+  let mediaType = opts.mediaType === 'movie' ? 'movie' : opts.mediaType === 'tv' ? 'tv' : ''
+  if (!tmdbId) {
+    const found = await ctx.tmdb.get(`/search/multi?query=${encodeURIComponent(opts.title)}&page=1&include_adult=true`)
+    const hit = (found?.results ?? []).find((r) => r.media_type === 'movie' || r.media_type === 'tv')
+    if (!hit) return { status: 'SKIP', notes: [`no tmdb results for "${opts.title}"`] }
+    tmdbId = hit.id
+    if (!mediaType) mediaType = hit.media_type
+    notes.push(`tmdb: ${hit.title || hit.name} (${hit.media_type} ${hit.id})`)
+  }
+  if (!mediaType) mediaType = 'tv'
+  const details = await ctx.tmdb.get(`/${mediaType}/${tmdbId}?append_to_response=external_ids`)
+  if (!details) return { status: 'FAIL', notes: [...notes, `tmdb ${mediaType}/${tmdbId} lookup failed`] }
+  const media = {
+    tmdbId,
+    type: mediaType,
+    season: Number(opts.season ?? 1) || 1,
+    episode: Number(opts.episode ?? 1) || 1,
+    title: details.title || details.name || '',
+    year: (details.release_date || details.first_air_date || '').split('-')[0] || '',
+    imdbId: details.external_ids?.imdb_id || details.imdb_id || '',
+    totalSeasons: details.number_of_seasons || 1,
+  }
+  notes.push(`media: ${media.title} ${media.year} s${media.season}e${media.episode} imdb:${media.imdbId || 'n/a'}`)
+  if (typeof factory.getSources === 'function') {
+    const res = await factory.getSources(media, opts.server)
+    if (!res?.sources?.length) return { status: 'FAIL', notes: [...notes, 'getSources returned no sources'] }
+    const types = [...new Set(res.sources.map((s) => s.type))].join(',')
+    notes.push(`sources: ${res.sources.length} (${types})${res.server ? ` via ${res.server}` : ''} audio:${(res.audioTracks ?? []).length} subs:${(res.subtitles ?? []).length}`)
+    return { status: 'PASS', notes }
+  }
+  if (typeof factory.getEmbedUrl === 'function') {
+    const url = await factory.getEmbedUrl(media)
+    if (!url || !String(url).startsWith('http')) {
+      return { status: 'FAIL', notes: [...notes, 'getEmbedUrl returned nothing usable'] }
+    }
+    notes.push(`embed: ${url}`)
+    return { status: 'PASS', notes }
+  }
+  return { status: 'FAIL', notes: [...notes, 'neither getSources nor getEmbedUrl'] }
+}
+
 const results = []
 for (const entry of wanted) {
   const file = path.join(ROOT, entry.entry)
@@ -410,6 +484,9 @@ for (const entry of wanted) {
     const factory = mod.default(makeCtx())
     if (entry.kind === 'manga') {
       const r = await testManga(entry, factory)
+      results.push({ id: entry.id, version: entry.version, ...r, notes: [...noteLines, ...r.notes] })
+    } else if (entry.kind === 'tv') {
+      const r = await testTv(entry, factory)
       results.push({ id: entry.id, version: entry.version, ...r, notes: [...noteLines, ...r.notes] })
     } else {
       const r = await testVideo(entry, factory)

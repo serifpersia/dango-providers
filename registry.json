@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -195,6 +195,72 @@
       "sha256": "4f5ff5997af61061242fd7a2fe781357079837defe978f90673176997e97a8d4",
       "mature": false,
       "kind": "manga",
+      "enabledByDefault": true
+    },
+    {
+      "id": "movybz",
+      "label": "Movy.bz (4K HLS)",
+      "version": "1.0.0",
+      "entry": "providers/tv/movybz-1.0.0.mjs",
+      "sha256": "0e9091759a0f46d0201e80c101a7bb376aeeab60fdad2bebcf7292e0029a3e2f",
+      "mature": false,
+      "kind": "tv",
+      "tier": "direct",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vixsrc",
+      "label": "VixSrc (HLS)",
+      "version": "1.0.0",
+      "entry": "providers/tv/vixsrc-1.0.0.mjs",
+      "sha256": "747cafe305d72b1f5aa64813e91e890f9a3263352a49a54ae7fd22a715fcd97b",
+      "mature": false,
+      "kind": "tv",
+      "tier": "direct",
+      "enabledByDefault": true
+    },
+    {
+      "id": "embedmaster",
+      "label": "EmbedMaster",
+      "version": "1.0.0",
+      "entry": "providers/tv/embedmaster-1.0.0.mjs",
+      "sha256": "a55e33ffc34c0d28667388b305b9f9f4c7de8e3d21a59aaaac6d4a99ca92d7c7",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vidfast",
+      "label": "VidFast",
+      "version": "1.0.0",
+      "entry": "providers/tv/vidfast-1.0.0.mjs",
+      "sha256": "0a597a9b626762b0feb8abc30109dd932e3df448535260370d04ee67d1311080",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "videasy",
+      "label": "VidEasy",
+      "version": "1.0.0",
+      "entry": "providers/tv/videasy-1.0.0.mjs",
+      "sha256": "240161fb632a3b540cffb9d1dc77ee8f4919b166d3ca329f65525bd434633fac",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vidrock",
+      "label": "VidRock",
+      "version": "1.0.0",
+      "entry": "providers/tv/vidrock-1.0.0.mjs",
+      "sha256": "558bb69a221b5307703cf4e73e1707ffc98005621768bbbc573f37762976185f",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
       "enabledByDefault": true
     }
   ]
