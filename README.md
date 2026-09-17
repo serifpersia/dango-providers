@@ -41,6 +41,8 @@ providers/
 - `entry`: absolute `https://` URL or path relative to `registry.json`.
 - `sha256`: hex digest of the exact `.mjs` bytes. Required.
 - `mature`: adult-only provider (shown only for adult titles).
+- `kind`: `anime` (default) or `asmr`. Non-anime providers are hidden
+  from the anime player dropdown but still served by their own routes.
 - `sub`: `soft | hard | mixed` subtitle type (omit for mature providers).
 - `tier`: `direct | embed | cookie`.
 - `modes`: subset of `["sub", "dub"]` (defaults to both).

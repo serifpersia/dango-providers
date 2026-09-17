@@ -173,6 +173,7 @@
       "entry": "providers/jasmr-1.0.0.mjs",
       "sha256": "2160da1a09b7946c9eca5b67deb210d16ff233f1ea9ce95e3bdea5f698d7d81b",
       "mature": false,
+      "kind": "asmr",
       "tier": "direct",
       "enabledByDefault": true
     }
