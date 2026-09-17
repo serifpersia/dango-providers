@@ -299,7 +299,7 @@ export default function createProvider(ctx) {
         : MOVY_SERVERS
     for (const city of cities) {
       const result = await tryMovyCity(city, baseParams, seed, numericTmdbId)
-      if (result) return { ...result, server: city }
+      if (result) return { ...result, referer: 'https://www.movy.bz/', server: city }
     }
     return null
   }
