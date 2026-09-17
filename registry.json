@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -43,7 +43,7 @@
       "label": "AnimeGG",
       "version": "1.0.1",
       "entry": "providers/anime/animegg-1.0.1.mjs",
-      "sha256": "1c31b995666112ded133b5b686ccf6e5d268bb3b8a9a56a44995b4f3185a91fb",
+      "sha256": "1a116624049b73aaf02caafc468a06fd7acd8f67b46a9d249e46871d9ba631f4",
       "mature": false,
       "sub": "hard",
       "tier": "direct",
