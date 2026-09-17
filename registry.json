@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "updatedAt": "2026-09-17T00:00:00Z",
   "providers": [
     {
@@ -253,14 +253,26 @@
       "enabledByDefault": true
     },
     {
-      "id": "vidrock",
-      "label": "VidRock",
-      "version": "1.0.0",
-      "entry": "providers/tv/vidrock-1.0.0.mjs",
-      "sha256": "558bb69a221b5307703cf4e73e1707ffc98005621768bbbc573f37762976185f",
+      "id": "movybz",
+      "label": "Movy.bz (4K HLS)",
+      "version": "1.0.2",
+      "entry": "providers/tv/movybz-1.0.2.mjs",
+      "sha256": "572634dfc5058e2ca9c170dc0d39a60d1f595d85206a596d978e9d7bdedf2393",
       "mature": false,
       "kind": "tv",
-      "tier": "embed",
+      "tier": "direct",
+      "enabledByDefault": true
+    },
+    {
+      "id": "anizone",
+      "label": "AniZone",
+      "version": "1.0.0",
+      "entry": "providers/anime/anizone-1.0.0.mjs",
+      "sha256": "99678b637d194c38a151f1423dff0bf09873a4763cc7b92dcc3f081cfe6334ac",
+      "mature": false,
+      "sub": "soft",
+      "tier": "direct",
+      "modes": ["sub"],
       "enabledByDefault": true
     }
   ]
