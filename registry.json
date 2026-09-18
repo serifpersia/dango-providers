@@ -1,6 +1,6 @@
 {
-  "version": 12,
-  "updatedAt": "2026-09-17T00:00:00Z",
+  "version": 13,
+  "updatedAt": "2026-09-18T00:00:00Z",
   "providers": [
     {
       "id": "megaplay",
@@ -131,6 +131,7 @@
       "mature": true,
       "tier": "direct",
       "modes": ["sub"],
+      "browse": { "genre": true },
       "enabledByDefault": true
     },
     {
@@ -142,6 +143,7 @@
       "mature": true,
       "tier": "direct",
       "modes": ["sub"],
+      "browse": { "genre": true, "sort": true },
       "enabledByDefault": true
     },
     {
@@ -153,6 +155,7 @@
       "mature": true,
       "tier": "direct",
       "modes": ["sub"],
+      "browse": { "genre": true },
       "enabledByDefault": true
     },
     {
@@ -164,6 +167,7 @@
       "mature": true,
       "tier": "direct",
       "modes": ["sub"],
+      "browse": { "genre": true, "order": true, "studio": true, "pageSize": 24 },
       "enabledByDefault": true
     },
     {

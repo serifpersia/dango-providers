@@ -53,6 +53,14 @@ providers/
 - `sub`: `soft | hard | mixed` subtitle type (omit for mature providers).
 - `tier`: `direct | embed | cookie`.
 - `modes`: subset of `["sub", "dub"]` (defaults to both).
+- `browse` (optional, for providers with a `browse(options)` function):
+  declares which browse filters dango's mature page renders —
+  `{ "genre": true, "order": true, "studio": true, "sort": true,
+  "pageSize": 24 }` (all keys optional; `pageSize` is the preferred
+  results-per-page, default 14). Filter *values* (genre/tag/order
+  lists) come from the module's string-array exports
+  (`*_GENRES`, `*_TAGS` → genres, `*_ORDERS` → orders), which dango
+  collects at load time — no registry change needed for those.
 - `enabledByDefault`: `false` ships the provider disabled.
 
 ## Provider modules
