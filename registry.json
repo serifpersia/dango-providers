@@ -1,6 +1,6 @@
 {
-  "version": 13,
-  "updatedAt": "2026-09-18T00:00:00Z",
+  "version": 14,
+  "updatedAt": "2026-09-18T11:08:44Z",
   "providers": [
     {
       "id": "megaplay",
@@ -277,6 +277,50 @@
       "sub": "soft",
       "tier": "direct",
       "modes": ["sub"],
+      "enabledByDefault": true
+    },
+    {
+      "id": "vidlink",
+      "label": "VidLink",
+      "version": "1.0.0",
+      "entry": "providers/tv/vidlink-1.0.0.mjs",
+      "sha256": "885e618a348f008b1c1f4f5d016bad6c0131f4bfb7539656e5aa17fa3731c671",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "moviesapi",
+      "label": "MoviesAPI",
+      "version": "1.0.0",
+      "entry": "providers/tv/moviesapi-1.0.0.mjs",
+      "sha256": "5fa8a078deb866ec22c3eb0fe15f9d859cd33ea0d6d99013a281bfb763153372",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vidnest",
+      "label": "VidNest",
+      "version": "1.0.0",
+      "entry": "providers/tv/vidnest-1.0.0.mjs",
+      "sha256": "ae9a50709ef7201fa38be25e2467effbd992308f607c2fd4eea8e12a5c6b6b06",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vidzee",
+      "label": "VidZee",
+      "version": "1.0.0",
+      "entry": "providers/tv/vidzee-1.0.0.mjs",
+      "sha256": "c9e9b239c59f316e392c19e7577773edfa4bb5fedc31cda3e7df70aa2e6e7b90",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
       "enabledByDefault": true
     }
   ]
