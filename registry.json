@@ -1,6 +1,6 @@
 {
-  "version": 14,
-  "updatedAt": "2026-09-18T11:08:44Z",
+  "version": 15,
+  "updatedAt": "2026-09-19T12:00:00Z",
   "providers": [
     {
       "id": "megaplay",
@@ -29,9 +29,9 @@
     {
       "id": "anibd",
       "label": "AniBD",
-      "version": "1.0.0",
-      "entry": "providers/anime/anibd-1.0.0.mjs",
-      "sha256": "59155577bf29bf10612506b4aea530dd366f273b6db96f01810bbb0fcd8b8652",
+      "version": "1.0.1",
+      "entry": "providers/anime/anibd-1.0.1.mjs",
+      "sha256": "3607f2ade50d49ebf26b57d2dde9097ec416b5787de47cc3608eab75f661b1fd",
       "mature": false,
       "sub": "hard",
       "tier": "direct",
@@ -270,9 +270,9 @@
     {
       "id": "anizone",
       "label": "AniZone",
-      "version": "1.0.0",
-      "entry": "providers/anime/anizone-1.0.0.mjs",
-      "sha256": "99678b637d194c38a151f1423dff0bf09873a4763cc7b92dcc3f081cfe6334ac",
+      "version": "1.0.1",
+      "entry": "providers/anime/anizone-1.0.1.mjs",
+      "sha256": "58dcdfdcfd45cdbdf7b50be528585e86c592625fcf464573a2c4b503101d2b70",
       "mature": false,
       "sub": "soft",
       "tier": "direct",
