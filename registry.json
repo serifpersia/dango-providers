@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 16,
   "updatedAt": "2026-09-19T12:00:00Z",
   "providers": [
     {
@@ -29,9 +29,9 @@
     {
       "id": "anibd",
       "label": "AniBD",
-      "version": "1.0.1",
-      "entry": "providers/anime/anibd-1.0.1.mjs",
-      "sha256": "3607f2ade50d49ebf26b57d2dde9097ec416b5787de47cc3608eab75f661b1fd",
+      "version": "1.0.2",
+      "entry": "providers/anime/anibd-1.0.2.mjs",
+      "sha256": "ac42780eee198c3c80490e2f63918a4f8387c033d9e4d2d8be8d819b47299ccc",
       "mature": false,
       "sub": "hard",
       "tier": "direct",
