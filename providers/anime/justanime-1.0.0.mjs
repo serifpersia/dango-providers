@@ -72,28 +72,13 @@ export default function createProvider(ctx) {
   }
 
   async function resolveShowId(title, romaji) {
-    const targets = [title, romaji].filter((t) => !!t && t.trim().length > 0)
-    if (targets.length === 0) return null
-
-    for (const variant of ctx.titleMatch.buildQueryVariants(title, romaji)) {
-      let results
-      try {
-        results = await search({ query: variant })
-      } catch {
-        continue
-      }
-      if (results.length === 0) continue
-
-      const candidates = results.map((r) => ({
+    return ctx.resolveBestShowId(title, romaji, async (variant) => {
+      const results = await search({ query: variant })
+      return results.map((r) => ({
         title: r.name || r.englishName || '',
         id: r.id || r._id || '',
       }))
-
-      const matchResult = ctx.titleMatch.pickBestMatch(candidates, targets)
-      if (matchResult) return matchResult.item.id
-    }
-
-    return null
+    })
   }
 
   function isDirectId(showId) {

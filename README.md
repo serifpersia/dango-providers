@@ -22,7 +22,7 @@ providers/
 
 ```json
 {
-  "version": 16,
+  "version": 17,
   "updatedAt": "2026-09-19T12:00:00Z",
   "providers": [
     {
@@ -43,7 +43,12 @@ providers/
 
 - `id`: lowercase `[a-z0-9-]`, unique. Same id as a built-in overrides it.
 - `entry`: absolute `https://` URL or path relative to `registry.json`.
-- `sha256`: hex digest of the exact `.mjs` bytes (LF-normalized). Required.
+  Omit it for template embeds (see `embedBase`).
+- `embedBase`: `https://` base URL for `{base}/movie/{id}` +
+  `{base}/tv/{id}/{season}/{episode}` TV embeds. No module file, no
+  `sha256` — dango builds the provider from the registry row.
+- `sha256`: hex digest of the exact `.mjs` bytes (LF-normalized). Required
+  unless `embedBase` is set.
 - `mature`: adult-only provider, shown only for adult titles.
 - `kind`: `anime` (default), `asmr`, `manga`, or `tv`. Non-anime providers
   are hidden from the anime player dropdown. Manga modules implement
@@ -130,6 +135,9 @@ hand-synced on every `createCtx` change.
 - `ctx.userAgent`
 - `ctx.titleMatch.buildQueryVariants(title, romaji?)` /
   `ctx.titleMatch.pickBestMatch(items, targets)`
+- `ctx.resolveBestShowId(title, romaji?, searchFn)` — runs the
+  variants loop for you; `searchFn(variant)` returns
+  `[{ title, id }]`. Prefer it over a hand-rolled loop.
 - `ctx.anilist.request(query, vars?)`, `ctx.anilist.parseMalId(id)`,
   `ctx.anilist.searchByTitle(title)`
 - `ctx.kitsu.metaByAnilistId(anilistId)`

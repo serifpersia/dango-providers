@@ -120,37 +120,16 @@ export default function createProvider(ctx) {
   }
 
   async function resolveShowId(title, romaji, mode) {
-    const targets = [title, romaji].filter((t) => !!t && t.trim().length > 0)
-    if (targets.length === 0) return null
-
-    for (const variant of ctx.titleMatch.buildQueryVariants(title, romaji)) {
+    return ctx.resolveBestShowId(title, romaji, async (variant) => {
       const results = await search({ query: variant })
-      if (results.length === 0) continue
-
       const candidates = results.map((r) => ({
         title: r.name || r.englishName || '',
         id: r._id ?? r.id ?? '',
         type: (r.type || '').toLowerCase(),
       }))
-
-      let pool = candidates
-      if (mode) {
-        const modeMatched = candidates.filter((c) => c.type === mode)
-        if (modeMatched.length > 0) {
-          pool = modeMatched
-        }
-      }
-
-      const matchResult = ctx.titleMatch.pickBestMatch(
-        pool.map((c) => ({ title: c.title, id: c.id })),
-        targets
-      )
-      if (matchResult) {
-        return matchResult.item.id
-      }
-    }
-
-    return null
+      const pool = mode ? candidates.filter((c) => c.type === mode) : []
+      return (pool.length > 0 ? pool : candidates).map((c) => ({ title: c.title, id: c.id }))
+    })
   }
 
   async function getEpisodes(showId, mode) {

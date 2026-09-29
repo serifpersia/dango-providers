@@ -273,32 +273,23 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function resolveShowId(title, romaji, mode) {
-    const query = (romaji || title).trim()
-    if (!query) return null
-    const targets = [title, romaji].filter((t) => !!t)
-    for (const variant of ctx.titleMatch.buildQueryVariants(title, romaji)) {
+  async function resolveShowId(title, romaji) {
+    return ctx.resolveBestShowId(title, romaji, async (variant) => {
       const url = `${SEARCH_URL}?text=${encodeURIComponent(variant)}&order=recent&page=1&limit=23&genres=&blacklist=&studio=&ibt=0&swa=1`
       const html = await fetchText(url)
-      const entries = parseSearchResults(html)
-      if (entries.length === 0) continue
-      const seriesMap = buildSeriesMap(entries)
+      const seriesMap = buildSeriesMap(parseSearchResults(html))
       const nameCandidates = []
       for (const [key, eps] of seriesMap.entries()) {
         const seenNames = new Set()
         for (const ep of eps) {
           if (ep.name && !seenNames.has(ep.name.toLowerCase())) {
             seenNames.add(ep.name.toLowerCase())
-            nameCandidates.push({ title: ep.name, key })
+            nameCandidates.push({ title: ep.name, id: key })
           }
         }
       }
-      const match = ctx.titleMatch.pickBestMatch(nameCandidates, targets)
-      if (match) {
-        return match.item.key
-      }
-    }
-    return null
+      return nameCandidates
+    })
   }
 
   async function getEpisodes(showId, mode) {

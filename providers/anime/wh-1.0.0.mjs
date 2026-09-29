@@ -326,20 +326,14 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function resolveShowId(title, romaji, mode) {
-    const query = (romaji || title).trim()
-    if (!query) return null
-    const targets = [title, romaji].filter((t) => !!t)
-    for (const variant of ctx.titleMatch.buildQueryVariants(title, romaji)) {
+  async function resolveShowId(title, romaji) {
+    return ctx.resolveBestShowId(title, romaji, async (variant) => {
       const html = await fetchText(`${BASE_URL}/?s=${encodeURIComponent(variant)}`)
-      const results = parseSearchArticles(html)
-      if (results.length === 0) continue
-      const matchResult = ctx.titleMatch.pickBestMatch(results, targets)
-      if (matchResult) {
-        return matchResult.item.url.split('/').filter(Boolean).pop() || null
-      }
-    }
-    return null
+      return parseSearchArticles(html).map((r) => ({
+        title: r.title,
+        id: r.url.split('/').filter(Boolean).pop() || '',
+      }))
+    })
   }
 
   async function getEpisodes(showId, mode) {

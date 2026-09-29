@@ -1,6 +1,6 @@
 {
-  "version": 16,
-  "updatedAt": "2026-09-19T12:00:00Z",
+  "version": 17,
+  "updatedAt": "2026-09-29T15:46:07Z",
   "providers": [
     {
       "id": "megaplay",
@@ -11,7 +11,10 @@
       "mature": false,
       "sub": "soft",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -19,11 +22,14 @@
       "label": "JustAnime",
       "version": "1.0.0",
       "entry": "providers/anime/justanime-1.0.0.mjs",
-      "sha256": "7e1a7687c671ae6c1b3044a25a6a5fd935f18a9b6d5502dc82b88475e350a9d3",
+      "sha256": "5bda1016ebd71ba6b9809c0af45e7276bb6ae3e5f2c4b718bf9b9aff7cfbbd5c",
       "mature": false,
       "sub": "mixed",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -35,7 +41,10 @@
       "mature": false,
       "sub": "hard",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -47,7 +56,10 @@
       "mature": false,
       "sub": "hard",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -59,7 +71,10 @@
       "mature": false,
       "sub": "soft",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -67,11 +82,14 @@
       "label": "Anilight",
       "version": "1.0.0",
       "entry": "providers/anime/anilight-1.0.0.mjs",
-      "sha256": "c10e87b81225ac4bdf1dc9bebdc7d481c0ba33339e720c5e7c5d1bb2ec5bac2e",
+      "sha256": "4d139a51be5938738b7fda6ec9587e6c81c0c4ac73a34d9ad1f60025ca69f5c8",
       "mature": false,
       "sub": "mixed",
       "tier": "direct",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -79,11 +97,14 @@
       "label": "AnimePahe",
       "version": "1.0.1",
       "entry": "providers/anime/animepahe-1.0.1.mjs",
-      "sha256": "8cd812d413f21f5952a1a5491a38f11761b71adf92318e4b1cceb8784fc55feb",
+      "sha256": "8295986a5289296228d6851779e4b7b76a80e1fa693de45cc0ed843d21dba544",
       "mature": false,
       "sub": "hard",
       "tier": "cookie",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -91,11 +112,14 @@
       "label": "Animeya",
       "version": "1.0.0",
       "entry": "providers/anime/animeya-1.0.0.mjs",
-      "sha256": "0b1fd96ecd189d2f2364929970d325fb15e6811cb7ada611a483faeef1047919",
+      "sha256": "732b8aa2617a7ce6eff668afa3fbd8c7729bb05c4d0976e4b4475ecf5557cdcd",
       "mature": false,
       "sub": "mixed",
       "tier": "embed",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -103,11 +127,14 @@
       "label": "123Anime",
       "version": "1.0.0",
       "entry": "providers/anime/123anime-1.0.0.mjs",
-      "sha256": "fe63fbadcf099c68f9f20cce260b4a30d51493d851828e0a240ca304026797df",
+      "sha256": "91932d369e421980d8a9df6e57a8f545a133acbfe9807fa3efb097d59b7fe8ea",
       "mature": false,
       "sub": "hard",
       "tier": "embed",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -119,7 +146,10 @@
       "mature": false,
       "sub": "soft",
       "tier": "embed",
-      "modes": ["sub", "dub"],
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     },
     {
@@ -127,11 +157,15 @@
       "label": "WH",
       "version": "1.0.0",
       "entry": "providers/anime/wh-1.0.0.mjs",
-      "sha256": "69680533987f21b1d16d970993929d23dfea12efbdf5ca9fc46ea8e0b0648c55",
+      "sha256": "730fed19f867c1078b576aab315b9944fe6bffddb46dda2a41710107ac79f7b9",
       "mature": true,
       "tier": "direct",
-      "modes": ["sub"],
-      "browse": { "genre": true },
+      "modes": [
+        "sub"
+      ],
+      "browse": {
+        "genre": true
+      },
       "enabledByDefault": true
     },
     {
@@ -139,11 +173,16 @@
       "label": "HN",
       "version": "1.0.0",
       "entry": "providers/anime/hn-1.0.0.mjs",
-      "sha256": "feb39d383e71c959796087b7836a26ec47397cb4de3dc23fa231327a0b80b26b",
+      "sha256": "d8874e95ce9e9a516a660c71a1238c384a2e709d1eeaa026b87af99909f05fbe",
       "mature": true,
       "tier": "direct",
-      "modes": ["sub"],
-      "browse": { "genre": true, "sort": true },
+      "modes": [
+        "sub"
+      ],
+      "browse": {
+        "genre": true,
+        "sort": true
+      },
       "enabledByDefault": true
     },
     {
@@ -151,11 +190,15 @@
       "label": "HT",
       "version": "1.0.0",
       "entry": "providers/anime/ht-1.0.0.mjs",
-      "sha256": "f85334b99ea16414b0b8d683089c7ef79838a78c560aafd6514e40aec3d6d2ab",
+      "sha256": "c8a0b81c3a102ce9884aa452a4d9293f31dfafaf663c084f1a8159e290a5f27c",
       "mature": true,
       "tier": "direct",
-      "modes": ["sub"],
-      "browse": { "genre": true },
+      "modes": [
+        "sub"
+      ],
+      "browse": {
+        "genre": true
+      },
       "enabledByDefault": true
     },
     {
@@ -163,11 +206,18 @@
       "label": "OP",
       "version": "1.0.0",
       "entry": "providers/anime/op-1.0.0.mjs",
-      "sha256": "22f596febbffd068ef386e16dc672bc7fa3084a687e05ddb23ca8a30733f1b74",
+      "sha256": "0ce2420781bff5bf742129362e322957893bd731c968e5b17b95a81f3471b4b2",
       "mature": true,
       "tier": "direct",
-      "modes": ["sub"],
-      "browse": { "genre": true, "order": true, "studio": true, "pageSize": 24 },
+      "modes": [
+        "sub"
+      ],
+      "browse": {
+        "genre": true,
+        "order": true,
+        "studio": true,
+        "pageSize": 24
+      },
       "enabledByDefault": true
     },
     {
@@ -175,7 +225,7 @@
       "label": "JAsmr",
       "version": "1.0.0",
       "entry": "providers/asmr/jasmr-1.0.0.mjs",
-      "sha256": "2160da1a09b7946c9eca5b67deb210d16ff233f1ea9ce95e3bdea5f698d7d81b",
+      "sha256": "28ea26bae53bb96202b5b14d5d08b7d662eb4ef10669bb65a120453be7f2f169",
       "mature": false,
       "kind": "asmr",
       "tier": "direct",
@@ -227,8 +277,7 @@
       "id": "embedmaster",
       "label": "EmbedMaster",
       "version": "1.0.0",
-      "entry": "providers/tv/embedmaster-1.0.0.mjs",
-      "sha256": "a55e33ffc34c0d28667388b305b9f9f4c7de8e3d21a59aaaac6d4a99ca92d7c7",
+      "embedBase": "https://embedmaster.link",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -238,8 +287,7 @@
       "id": "vidfast",
       "label": "VidFast",
       "version": "1.0.0",
-      "entry": "providers/tv/vidfast-1.0.0.mjs",
-      "sha256": "0a597a9b626762b0feb8abc30109dd932e3df448535260370d04ee67d1311080",
+      "embedBase": "https://vidfast.pro",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -249,8 +297,7 @@
       "id": "videasy",
       "label": "VidEasy",
       "version": "1.0.0",
-      "entry": "providers/tv/videasy-1.0.0.mjs",
-      "sha256": "240161fb632a3b540cffb9d1dc77ee8f4919b166d3ca329f65525bd434633fac",
+      "embedBase": "https://player.videasy.to",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -260,8 +307,7 @@
       "id": "vidrock",
       "label": "VidRock",
       "version": "1.0.0",
-      "entry": "providers/tv/vidrock-1.0.0.mjs",
-      "sha256": "558bb69a221b5307703cf4e73e1707ffc98005621768bbbc573f37762976185f",
+      "embedBase": "https://vidrock.ru",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -276,15 +322,16 @@
       "mature": false,
       "sub": "soft",
       "tier": "direct",
-      "modes": ["sub"],
+      "modes": [
+        "sub"
+      ],
       "enabledByDefault": true
     },
     {
       "id": "vidlink",
       "label": "VidLink",
       "version": "1.0.0",
-      "entry": "providers/tv/vidlink-1.0.0.mjs",
-      "sha256": "885e618a348f008b1c1f4f5d016bad6c0131f4bfb7539656e5aa17fa3731c671",
+      "embedBase": "https://vidlink.pro",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -294,8 +341,7 @@
       "id": "moviesapi",
       "label": "MoviesAPI",
       "version": "1.0.0",
-      "entry": "providers/tv/moviesapi-1.0.0.mjs",
-      "sha256": "5fa8a078deb866ec22c3eb0fe15f9d859cd33ea0d6d99013a281bfb763153372",
+      "embedBase": "https://moviesapi.to",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -305,8 +351,7 @@
       "id": "vidnest",
       "label": "VidNest",
       "version": "1.0.0",
-      "entry": "providers/tv/vidnest-1.0.0.mjs",
-      "sha256": "ae9a50709ef7201fa38be25e2467effbd992308f607c2fd4eea8e12a5c6b6b06",
+      "embedBase": "https://vidnest.fun",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
@@ -316,8 +361,7 @@
       "id": "vidzee",
       "label": "VidZee",
       "version": "1.0.0",
-      "entry": "providers/tv/vidzee-1.0.0.mjs",
-      "sha256": "c9e9b239c59f316e392c19e7577773edfa4bb5fedc31cda3e7df70aa2e6e7b90",
+      "embedBase": "https://player.vidzee.wtf/embed",
       "mature": false,
       "kind": "tv",
       "tier": "embed",

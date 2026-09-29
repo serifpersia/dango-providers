@@ -57,6 +57,12 @@ for (const entry of entries) {
   const id = String(entry.id || '')
   if (wanted.size > 0 && !wanted.has(id.toLowerCase())) continue
   const row = { id, version: String(entry.version || ''), status: '', note: '' }
+  if (entry.embedBase && !entry.entry) {
+    row.status = 'EMBED'
+    row.note = String(entry.embedBase)
+    rows.push(row)
+    continue
+  }
   const target = String(entry.entry || '')
   if (/^https?:\/\//i.test(target)) {
     row.status = 'SKIP'

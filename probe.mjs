@@ -281,6 +281,25 @@ function makeCtx() {
       `/api/proxy?url=${encodeURIComponent(rawUrl)}&referer=${encodeURIComponent(referer)}`,
     userAgent: UA_DEFAULT,
     titleMatch: { buildQueryVariants, pickBestMatch },
+    resolveBestShowId: async (title, romaji, searchFn) => {
+      const targets = [title, romaji].filter((t) => typeof t === 'string' && t.trim().length > 0)
+      if (targets.length === 0) return null
+      for (const variant of buildQueryVariants(title, romaji)) {
+        let results
+        try {
+          results = await searchFn(variant)
+        } catch {
+          continue
+        }
+        if (!results || results.length === 0) continue
+        const match = pickBestMatch(
+          results.filter((r) => r && typeof r.id === 'string' && r.id.length > 0),
+          targets
+        )
+        if (match) return match.item.id
+      }
+      return null
+    },
     anilist: { request: anilistRequest, parseMalId, searchByTitle: searchAnilistByTitle },
     kitsu: { metaByAnilistId: kitsuMetaByAnilistId },
     tmdb: {
@@ -460,9 +479,32 @@ async function testTv(p, factory) {
 }
 
 const results = []
+function makeEmbedFactory(id, base) {
+  const root = String(base).trim().replace(/\/+$/, '')
+  return () => ({
+    name: id,
+    getEmbedUrl: async (media) => {
+      const tmdbId = Number(media.tmdbId)
+      if (!tmdbId) return null
+      if (media.type === 'movie') return `${root}/movie/${tmdbId}`
+      return `${root}/tv/${tmdbId}/${media.season || 1}/${media.episode || 1}`
+    },
+  })
+}
+
 for (const entry of wanted) {
-  const file = path.join(ROOT, entry.entry)
   const fail = (detail) => ({ id: entry.id, version: entry.version, status: 'FAIL', notes: [detail] })
+  if (entry.embedBase && !entry.entry) {
+    try {
+      const factory = makeEmbedFactory(entry.id, entry.embedBase)()
+      const r = await testTv(entry, factory)
+      results.push({ id: entry.id, version: entry.version, ...r, notes: [`embed: ${entry.embedBase}`, ...r.notes] })
+    } catch (e) {
+      results.push(fail(`${e?.message ?? e}`))
+    }
+    continue
+  }
+  const file = path.join(ROOT, entry.entry)
   try {
     if (!fs.existsSync(file)) {
       results.push(fail(`missing file ${entry.entry}`))

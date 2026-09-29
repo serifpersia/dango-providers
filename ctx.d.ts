@@ -40,9 +40,19 @@ export interface CtxRequestStore {
 // Missing keys mean the client never sent that header — treat as logged out.
 export type RequestKey = 'ua' | 'cookie' | 'jasmr_ua' | 'jasmr_cookie'
 
+export interface ResolveCandidate {
+  title: string
+  id: string
+}
+
 export interface RemoteCtx {
   cache: CtxCache
   logger: CtxLogger
+  resolveBestShowId(
+    title: string,
+    romaji: string | undefined,
+    searchFn: (variant: string) => Promise<ResolveCandidate[]>
+  ): Promise<string | null>
   fetchText(url: string, init?: Record<string, unknown>): Promise<string | null>
   fetchJson<T>(url: string, init?: Record<string, unknown>): Promise<T>
   proxyUrl(rawUrl: string, referer: string): string
