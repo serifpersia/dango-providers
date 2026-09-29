@@ -1,13 +1,13 @@
 {
-  "version": 17,
-  "updatedAt": "2026-09-29T15:46:07Z",
+  "version": 18,
+  "updatedAt": "2026-09-29T20:20:04Z",
   "providers": [
     {
       "id": "megaplay",
       "label": "MegaPlay",
-      "version": "1.0.0",
-      "entry": "providers/anime/megaplay-1.0.0.mjs",
-      "sha256": "230f010ff34c1819df1ca3fa6eeef9cce1ae3fec3d30bc48debbf1a42234c2dc",
+      "version": "1.0.1",
+      "entry": "providers/anime/megaplay-1.0.1.mjs",
+      "sha256": "d64ac4e65990221878859b305ac28e1a15881d5917f4e2fc135e06e145f59d2d",
       "mature": false,
       "sub": "soft",
       "tier": "direct",

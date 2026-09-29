@@ -498,16 +498,38 @@ export default function createProvider(ctx) {
         })
       }
     }
+    const cdnOrigin = (() => {
+      const first = links.find(
+        (l) => typeof l.link === 'string' && /^https?:\/\//i.test(l.link)
+      )
+      if (!first) return null
+      try {
+        return new URL(first.link).origin
+      } catch {
+        return null
+      }
+    })()
     const subtitles = (data.tracks || [])
       .filter((t) => {
         const kind = (t.kind || '').toLowerCase()
         return t.file && (!kind || kind.includes('caption') || kind.includes('sub'))
       })
-      .map((t) => ({
-        language: t.label || 'Unknown',
-        label: t.label || 'Unknown',
-        url: t.file,
-      }))
+      .map((t) => {
+        let url = t.file
+        if (cdnOrigin) {
+          try {
+            const u = new URL(t.file)
+            if (u.origin !== cdnOrigin) url = cdnOrigin + u.pathname + u.search + u.hash
+          } catch {
+            // ignore
+          }
+        }
+        return {
+          language: t.label || 'Unknown',
+          label: t.label || 'Unknown',
+          url,
+        }
+      })
     return [
       {
         sourceName: `MegaPlay (${mode.toUpperCase()})`,
