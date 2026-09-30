@@ -24,8 +24,8 @@ const MOVY_HEADERS = {
   'User-Agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   Accept: 'application/json, text/plain, */*',
-  Referer: 'https://www.movy.bz/',
-  Origin: 'https://www.movy.bz',
+  Referer: 'https://www.movy.sx/',
+  Origin: 'https://www.movy.sx',
 }
 
 const movyIsEven = (e) => ((e * (e + 1)) & 1) === 0
@@ -182,8 +182,8 @@ export default function createProvider(ctx) {
             const plRes = await fetch(s.url, {
               headers: {
                 'User-Agent': MOVY_HEADERS['User-Agent'],
-                Referer: 'https://www.movy.bz/',
-                Origin: 'https://www.movy.bz',
+                Referer: 'https://www.movy.sx/',
+                Origin: 'https://www.movy.sx',
               },
               signal: AbortSignal.timeout(6000),
             })
@@ -222,8 +222,8 @@ export default function createProvider(ctx) {
                     method: 'HEAD',
                     headers: {
                       'User-Agent': MOVY_HEADERS['User-Agent'],
-                      Referer: 'https://www.movy.bz/',
-                      Origin: 'https://www.movy.bz',
+                      Referer: 'https://www.movy.sx/',
+                      Origin: 'https://www.movy.sx',
                     },
                     signal: AbortSignal.timeout(5000),
                   })
@@ -254,8 +254,8 @@ export default function createProvider(ctx) {
               method: 'HEAD',
               headers: {
                 'User-Agent': MOVY_HEADERS['User-Agent'],
-                Referer: 'https://www.movy.bz/',
-                Origin: 'https://www.movy.bz',
+                Referer: 'https://www.movy.sx/',
+                Origin: 'https://www.movy.sx',
               },
               signal: AbortSignal.timeout(5000),
             })
@@ -299,7 +299,7 @@ export default function createProvider(ctx) {
         : MOVY_SERVERS
     for (const city of cities) {
       const result = await tryMovyCity(city, baseParams, seed, numericTmdbId)
-      if (result) return { ...result, referer: 'https://www.movy.bz/', server: city }
+      if (result) return { ...result, referer: 'https://www.movy.sx/', server: city }
     }
     return null
   }
