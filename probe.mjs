@@ -402,7 +402,13 @@ async function testVideo(p, factory) {
   const search = await factory.search({ query: opts.title })
   if (!search || search.length === 0) return { status: 'SKIP', notes: [`no results for "${opts.title}"`] }
   notes.push(`search: ${search.length} hits`)
-  const id = await factory.resolveShowId?.(opts.title)
+  let romaji
+  try {
+    romaji = (await searchAnilistByTitle(opts.title))?.title?.romaji ?? undefined
+  } catch {
+    romaji = undefined
+  }
+  const id = await factory.resolveShowId?.(opts.title, romaji)
   if (!id) return { status: 'FAIL', notes: [...notes, 'resolveShowId returned null'] }
   notes.push(`resolved: ${id}`)
   const eps = await factory.getEpisodes(id, opts.mode)

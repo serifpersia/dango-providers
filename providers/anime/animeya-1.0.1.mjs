@@ -102,154 +102,6 @@ export default function createProvider(ctx) {
     throw lastErr
   }
 
-  function parseRSCStream(html) {
-    const streamMap = new Map()
-    const regex = /self\.__next_f\.push\(\[(\d+|0),"((?:[^"\\]|\\.)*)"\]\)/g
-    let m
-    while ((m = regex.exec(html)) !== null) {
-      let raw = m[2]
-      try {
-        raw = JSON.parse(`"${raw}"`)
-      } catch {
-        raw = raw.replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\\\/g, '\\')
-      }
-      if (typeof raw !== 'string') continue
-      const idx = raw.indexOf(':')
-      if (idx === -1) continue
-      const id = raw.substring(0, idx)
-      const val = raw.substring(idx + 1)
-      try {
-        streamMap.set(
-          id,
-          val.trim().startsWith('[') || val.trim().startsWith('{') ? JSON.parse(val) : val
-        )
-      } catch {
-        streamMap.set(id, val)
-      }
-    }
-    return streamMap
-  }
-
-  function resolveRSC(obj, streamMap, depth = 0) {
-    if (depth > 20 || !obj) return obj
-    if (typeof obj === 'string' && obj.startsWith('$L')) {
-      const id = obj.substring(2)
-      const resolved = streamMap.get(id)
-      if (resolved) {
-        return resolveRSC(resolved, streamMap, depth + 1)
-      }
-      return obj
-    }
-    if (Array.isArray(obj)) {
-      return obj.map((item) => resolveRSC(item, streamMap, depth))
-    }
-    if (typeof obj === 'object') {
-      const record = obj
-      const newObj = {}
-      for (const key in record) {
-        newObj[key] = resolveRSC(record[key], streamMap, depth)
-      }
-      return newObj
-    }
-    return obj
-  }
-
-  function deepSearch(obj, pred, results = []) {
-    if (!obj || typeof obj !== 'object') return results
-    try {
-      const record = obj
-      if (pred(record)) results.push(record)
-      if (Array.isArray(obj)) {
-        for (const x of obj) deepSearch(x, pred, results)
-      } else {
-        for (const k in record) deepSearch(record[k], pred, results)
-      }
-    } catch {
-    }
-    return results
-  }
-
-  function extractCard(node) {
-    try {
-      if (!node.href || typeof node.href !== 'string' || !node.href.startsWith('/watch/'))
-        return null
-      const slug = node.href.split('/watch/')[1]
-      if (!slug) return null
-
-      if (!slug.includes('-') && slug.length > 12) return null
-
-      const props = { slug, title: 'Unknown', cover: '', type: 'TV' }
-      const coverNodes = deepSearch(
-        node,
-        (o) =>
-          !!(
-            (o?.cover &&
-              typeof o.cover === 'object' &&
-              (typeof o.cover.extraLarge === 'string' ||
-                typeof o.cover.large === 'string' ||
-                typeof o.cover.medium === 'string')) ||
-            typeof o?.image === 'string' ||
-            typeof o?.bannerImage === 'string'
-          )
-      )
-      const coverNode = coverNodes[0]
-      if (coverNode?.cover && typeof coverNode.cover === 'object') {
-        const c = coverNode.cover
-        props.cover = c.extraLarge || c.large || c.medium || ''
-      }
-      if (!props.cover && typeof coverNode?.image === 'string') props.cover = coverNode.image
-      if (!props.cover && typeof coverNode?.bannerImage === 'string')
-        props.cover = coverNode.bannerImage
-
-      const titleNodes = deepSearch(
-        node,
-        (o) =>
-          !!(
-            (o?.title &&
-              typeof o.title === 'object' &&
-              (typeof o.title.english === 'string' ||
-                typeof o.title.romaji === 'string' ||
-                typeof o.title.native === 'string')) ||
-            typeof o?.name === 'string'
-          )
-      )
-      const titleNode = titleNodes[0]
-      if (titleNode?.title && typeof titleNode.title === 'object') {
-        const t = titleNode.title
-        props.title = t.english || t.romaji || t.native || 'Unknown'
-      } else if (typeof titleNode?.name === 'string') {
-        props.title = titleNode.name
-      }
-
-      if (!props.title || props.title === 'Unknown') {
-        const potentialTitles = deepSearch(node, (o) => typeof o?.children === 'string')
-        if (potentialTitles.length > 0) {
-          props.title = potentialTitles[0].children
-        }
-      }
-
-      if (!props.cover) {
-        const serialized = JSON.stringify(node).replace(/\\\//g, '/')
-        const m = serialized.match(/https?:\/\/[^"\s]+anilistcdn[^"\s]+\.(?:jpg|jpeg|png|webp)/i)
-        if (m) props.cover = m[0]
-      }
-
-      const badgeNodes = deepSearch(
-        node,
-        (o) => !!(o?.['data-slot'] === 'badge' && Array.isArray(o?.children))
-      )
-      if (badgeNodes.length > 0) {
-        const bn = badgeNodes[0]
-        const count = bn.children.find((c) => typeof c === 'number')
-        if (typeof count === 'number') props.episodes = count
-      }
-      if (!props.cover && !props.title) return null
-      return props
-    } catch {
-      return null
-    }
-  }
-
   function cleanText(value) {
     return (value || '').replace(/\s+/g, ' ').trim()
   }
@@ -314,79 +166,39 @@ export default function createProvider(ctx) {
       const res = await fetchRetry(url)
 
       const html = await res.text()
-      const rscMap = parseRSCStream(html)
+      const $ = ctx.cheerio.load(html)
 
       const results = []
       const seen = new Set()
 
-      for (const rawObj of rscMap.values()) {
-        const obj = resolveRSC(rawObj, rscMap)
-        const mediasLists = deepSearch(obj, (o) => Array.isArray(o?.medias))
-        for (const listNode of mediasLists) {
-          const medias = listNode.medias
-          for (const media of medias) {
-            const slug = media.slug
-            if (slug && !seen.has(slug)) {
-              if (!slug.includes('-') && slug.length > 12) continue
-
-              seen.add(slug)
-              const titleNode = media.title
-              const title =
-                titleNode?.english ||
-                titleNode?.romaji ||
-                titleNode?.native ||
-                'Unknown'
-              const coverNode = media.coverImage
-              const cover =
-                coverNode?.extraLarge ||
-                coverNode?.large ||
-                coverNode?.medium ||
-                ''
-
-              const episodeCount = media.episodeCount || media.episodes || 0
-              const episodes = Array.from({ length: episodeCount }, (_, i) => String(i + 1))
-
-              results.push({
-                _id: slug,
-                id: slug,
-                name: title,
-                englishName: title,
-                thumbnail: cover,
-                type: media.format || 'TV',
-                availableEpisodesDetail: {
-                  sub: episodes,
-                  dub: episodes,
-                },
-              })
-            }
-          }
-        }
-
-        if (results.length === 0) {
-          deepSearch(
-            obj,
-            (o) => !!(o?.href && typeof o.href === 'string' && o.href.startsWith('/watch/'))
-          ).forEach((n) => {
-            const c = extractCard(n)
-            if (c && !seen.has(c.slug)) {
-              seen.add(c.slug)
-              const episodes = Array.from({ length: c.episodes || 1 }, (_, i) => String(i + 1))
-              results.push({
-                _id: c.slug,
-                id: c.slug,
-                name: c.title,
-                englishName: c.title,
-                thumbnail: c.cover,
-                type: c.type || 'TV',
-                availableEpisodesDetail: {
-                  sub: episodes,
-                  dub: episodes,
-                },
-              })
-            }
-          })
-        }
-      }
+      $('a[href^="/watch/"]').each((_, a) => {
+        const slug = ($(a).attr('href') || '').split('/watch/')[1]?.split(/[?#]/)[0]
+        if (!slug || seen.has(slug)) return
+        if (!slug.includes('-') && slug.length > 12) return
+        seen.add(slug)
+        const img = $(a).find('img').first()
+        const title =
+          img.attr('alt')?.trim() || $(a).find('h3').first().text().trim() || 'Unknown'
+        const cover = img.attr('src') || ''
+        const count = parseInt($(a).find('[data-slot="badge"]').first().text().trim(), 10)
+        const type = $(a).find('p.ml-auto').first().text().trim() || 'TV'
+        const episodes = Array.from(
+          { length: Number.isFinite(count) && count > 0 ? count : 1 },
+          (_, i) => String(i + 1)
+        )
+        results.push({
+          _id: slug,
+          id: slug,
+          name: title,
+          englishName: title,
+          thumbnail: cover,
+          type,
+          availableEpisodesDetail: {
+            sub: episodes,
+            dub: episodes,
+          },
+        })
+      })
       return results
     }
 
@@ -433,7 +245,6 @@ export default function createProvider(ctx) {
   async function getInfoInternal(slug) {
     const res = await fetchRetry(`https://animeya.cc/watch/${slug}`)
     const html = await res.text()
-    const rscMap = parseRSCStream(html)
 
     const details = {
       id: slug,
@@ -455,69 +266,49 @@ export default function createProvider(ctx) {
       /404:\s*This page could not be found\./i.test(htmlTitle) ||
       /404:\s*This page could not be found\./i.test(html)
 
-    for (const rawObj of rscMap.values()) {
-      const obj = resolveRSC(rawObj, rscMap)
-      const epLists = deepSearch(
-        obj,
-        (o) =>
-          !!(
-            Array.isArray(o) &&
-            o.length > 0 &&
-            typeof o[0]?.episodeNumber === 'number'
-          )
-      )
-
-      if (epLists.length > 0) {
-        for (const list of epLists) {
-          details.episodes.push(
-            ...list.map((ep) => ({
-              id: ep.id,
-              episodeNumber: ep.episodeNumber,
-              title: ep.title,
-              isFiller: ep.isFiller,
-            }))
-          )
+    try {
+      const pageSize = 200
+      let epTotal = 0
+      for (let page = 1; ; page++) {
+        const trpcUrl = `https://animeya.cc/api/trpc/episode.getAllEpisodesByMediaSlugWithPagination?batch=1&input=${encodeURIComponent(
+          JSON.stringify({ 0: { json: { slug, page, pageSize } } })
+        )}`
+        const tRes = await fetchRetry(trpcUrl)
+        const tData = (await tRes.json())?.[0]?.result?.data?.json
+        const eps = Array.isArray(tData?.eps) ? tData.eps : []
+        epTotal = Number(tData?.epsCount) || epTotal
+        for (const ep of eps) {
+          details.episodes.push({
+            id: ep.id,
+            episodeNumber: ep.episodeNumber,
+            title: ep.title,
+            isFiller: ep.isFiller,
+          })
         }
+        if (eps.length < pageSize || (epTotal > 0 && details.episodes.length >= epTotal)) break
       }
-      if (details.title === slug && !notFoundPage) {
-        const titleNodes = deepSearch(
-          obj,
-          (o) => !!(Array.isArray(o) && o[0] === '$' && o[1] === 'title')
-        )
-        if (titleNodes.length > 0) {
-          const node = titleNodes[0][3]
-          const t = node?.children
-          if (t) details.title = t.replace(' | Animeya', '')
+    } catch {
+    }
+    if (details.episodes.length === 0) {
+      const epRe =
+        /\\"id\\":(\d+),\\"isFiller\\":(true|false),\\"episodeNumber\\":(\d+),\\"title\\":\\"((?:[^"\\]|\\.)*)\\"/g
+      let epMatch
+      while ((epMatch = epRe.exec(html)) !== null) {
+        let epTitle = epMatch[4]
+        try {
+          epTitle = JSON.parse(`"${epTitle}"`)
+        } catch {
+          epTitle = epTitle.replace(/\\n/g, ' ')
         }
-      }
-      if (!details.cover) {
-        const coverNodes = deepSearch(
-          obj,
-          (o) =>
-            !!(
-              o?.cover &&
-              typeof o.cover === 'object' &&
-              (typeof o.cover.large === 'string' ||
-                typeof o.cover.extraLarge === 'string')
-            )
-        )
-        const cn = coverNodes[0]
-        if (cn?.cover && typeof cn.cover === 'object') {
-          const c = cn.cover
-          details.cover = c.extraLarge || c.large || ''
-        }
-      }
-      if (!details.description) {
-        const md = deepSearch(
-          obj,
-          (o) => !!(Array.isArray(o) && o[0] === '$' && o[1] === 'meta' && o[2] === 'description')
-        )
-        if (md.length > 0) {
-          const node = md[0][3]
-          details.description = node?.content || ''
-        }
+        details.episodes.push({
+          id: Number(epMatch[1]),
+          episodeNumber: Number(epMatch[3]),
+          title: epTitle,
+          isFiller: epMatch[2] === 'true',
+        })
       }
     }
+    if (htmlTitle && !notFoundPage) details.title = htmlTitle.replace(/\s*\|\s*Animeya\s*$/i, '')
     const unique = new Map()
     details.episodes.forEach((ep) => unique.set(ep.episodeNumber, ep))
     details.episodes = Array.from(unique.values()).sort((a, b) => a.episodeNumber - b.episodeNumber)

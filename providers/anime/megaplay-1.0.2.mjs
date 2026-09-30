@@ -150,6 +150,7 @@ export default function createProvider(ctx) {
           episodes
           status
           idMal
+          nextAiringEpisode { episode }
         }
       }`
       const data = await ctx.anilist.request(gql, { id: Number(showId) })
@@ -158,7 +159,9 @@ export default function createProvider(ctx) {
       const episodeCount = media.episodes || 0
       let count = episodeCount
       if (count === 0) {
-        if (media.status === 'RELEASING' || media.status === 'FINISHED') {
+        if (media.status === 'RELEASING') {
+          count = Math.max(1, (media.nextAiringEpisode?.episode ?? 13) - 1)
+        } else if (media.status === 'FINISHED') {
           count = 12
         }
       }

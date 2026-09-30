@@ -1,13 +1,13 @@
 {
-  "version": 18,
-  "updatedAt": "2026-09-29T20:20:04Z",
+  "version": 19,
+  "updatedAt": "2026-09-30T14:22:59Z",
   "providers": [
     {
       "id": "megaplay",
       "label": "MegaPlay",
-      "version": "1.0.1",
-      "entry": "providers/anime/megaplay-1.0.1.mjs",
-      "sha256": "d64ac4e65990221878859b305ac28e1a15881d5917f4e2fc135e06e145f59d2d",
+      "version": "1.0.2",
+      "entry": "providers/anime/megaplay-1.0.2.mjs",
+      "sha256": "a49dffc2122836eebac63a9f4fe500c6f34431f98d8065358680c011eccedb6d",
       "mature": false,
       "sub": "soft",
       "tier": "direct",
@@ -110,9 +110,9 @@
     {
       "id": "animeya",
       "label": "Animeya",
-      "version": "1.0.0",
-      "entry": "providers/anime/animeya-1.0.0.mjs",
-      "sha256": "732b8aa2617a7ce6eff668afa3fbd8c7729bb05c4d0976e4b4475ecf5557cdcd",
+      "version": "1.0.1",
+      "entry": "providers/anime/animeya-1.0.1.mjs",
+      "sha256": "a0fd64de073e79b1da93f027092cc7390f6d1ed3987f9fac5de2fd7872e0eea2",
       "mature": false,
       "sub": "mixed",
       "tier": "embed",
