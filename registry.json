@@ -1,6 +1,6 @@
 {
-  "version": 19,
-  "updatedAt": "2026-09-30T14:22:59Z",
+  "version": 21,
+  "updatedAt": "2026-09-30T14:42:21Z",
   "providers": [
     {
       "id": "megaplay",
@@ -33,21 +33,6 @@
       "enabledByDefault": true
     },
     {
-      "id": "anibd",
-      "label": "AniBD",
-      "version": "1.0.2",
-      "entry": "providers/anime/anibd-1.0.2.mjs",
-      "sha256": "ac42780eee198c3c80490e2f63918a4f8387c033d9e4d2d8be8d819b47299ccc",
-      "mature": false,
-      "sub": "hard",
-      "tier": "direct",
-      "modes": [
-        "sub",
-        "dub"
-      ],
-      "enabledByDefault": true
-    },
-    {
       "id": "animegg",
       "label": "AnimeGG",
       "version": "1.0.1",
@@ -70,21 +55,6 @@
       "sha256": "08c997309251ca48bbeb2a4fc34c6bada87630433a1878559d3411ebc68c0f5e",
       "mature": false,
       "sub": "soft",
-      "tier": "direct",
-      "modes": [
-        "sub",
-        "dub"
-      ],
-      "enabledByDefault": true
-    },
-    {
-      "id": "anilight",
-      "label": "Anilight",
-      "version": "1.0.0",
-      "entry": "providers/anime/anilight-1.0.0.mjs",
-      "sha256": "4d139a51be5938738b7fda6ec9587e6c81c0c4ac73a34d9ad1f60025ca69f5c8",
-      "mature": false,
-      "sub": "mixed",
       "tier": "direct",
       "modes": [
         "sub",
