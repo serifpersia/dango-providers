@@ -1,6 +1,6 @@
 {
-  "version": 21,
-  "updatedAt": "2026-09-30T14:42:21Z",
+  "version": 23,
+  "updatedAt": "2026-09-30T15:45:00Z",
   "providers": [
     {
       "id": "megaplay",
@@ -332,6 +332,39 @@
       "label": "VidZee",
       "version": "1.0.0",
       "embedBase": "https://player.vidzee.wtf/embed",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "cinesrc",
+      "label": "CineSrc",
+      "version": "1.0.0",
+      "entry": "providers/tv/cinesrc-1.0.0.mjs",
+      "sha256": "449b17f947672a716b63a48be6f45574c55c25720f8fc824d68a50480c5aeaf6",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "ythd",
+      "label": "YTHD",
+      "version": "1.0.0",
+      "entry": "providers/tv/ythd-1.0.0.mjs",
+      "sha256": "04c63b8e4e4d794445b73e2345190174212fdb0b673c0d8a33305ec7d9bb724b",
+      "mature": false,
+      "kind": "tv",
+      "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "rive",
+      "label": "Rive",
+      "version": "1.0.0",
+      "entry": "providers/tv/rive-1.0.0.mjs",
+      "sha256": "61f3b6766f3048dd9344dfa8614dcb5602b731f5e1f9c77543c8cce96b385fd6",
       "mature": false,
       "kind": "tv",
       "tier": "embed",
