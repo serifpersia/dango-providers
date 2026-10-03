@@ -233,7 +233,7 @@ export default function createProvider(ctx) {
       const page = Math.max(1, options.page || 1)
       const limit = Math.min(100, Math.max(1, options.limit || 40))
 
-      const cacheKey = `ht_browse_${genre || query}_${page}_${limit}`
+      const cacheKey = `ht_browse_g:${genre}_q:${query}_${page}_${limit}`
       const cached = cache.get(cacheKey)
       if (cached) return cached
 
@@ -246,7 +246,8 @@ export default function createProvider(ctx) {
         videos = parseFlightVideos(html)
         hasMore = new RegExp(`[?&]page=${page + 1}\\b`).test(html)
       } else if (query) {
-        videos = await searchApi(query, limit)
+        if (page > 1) return { shows: [], hasMore: false }
+        videos = await searchApi(query, 40)
       } else {
         const html = await fetchPageHtml(`${BASE_URL}/browse`)
         videos = parseFlightVideos(html)

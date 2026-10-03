@@ -134,71 +134,26 @@ function extractSeriesCover(html) {
   return anyUpload || ''
 }
 
-function resolveNuxtRefs(raw) {
-  const visited = new Set()
-  function resolve(v) {
-    if (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < raw.length) {
-      if (visited.has(v)) return v
-      visited.add(v)
-      const result = resolve(raw[v])
-      visited.delete(v)
-      return result
-    }
-    if (Array.isArray(v)) {
-      const wrapper = v[0]
-      if (
-        typeof wrapper === 'string' &&
-        (wrapper === 'ShallowReactive' || wrapper === 'ShallowRef' || wrapper === 'EmptyRef')
-      ) {
-        return resolve(v[1])
-      }
-      return v.map(resolve)
-    }
-    if (v && typeof v === 'object') {
-      const obj = {}
-      for (const [k, val] of Object.entries(v)) {
-        obj[k] = resolve(val)
-      }
-      return obj
-    }
-    return v
+async function fetchGenreFacets(cache, log) {
+  const cacheKey = 'hn_genres'
+  const cached = cache.get(cacheKey)
+  if (cached) return cached
+  try {
+    const res = await fetch(`${API_URL}/genres?pagination[pageSize]=100`, {
+      headers: { 'User-Agent': UA, Referer: `${BASE_URL}/` },
+      signal: AbortSignal.timeout(15000),
+    })
+    if (!res.ok) return []
+    const json = await res.json()
+    const genres = (json?.data || [])
+      .filter((g) => g && g.url && g.name)
+      .map((g) => ({ slug: String(g.url), name: String(g.name) }))
+    if (genres.length > 0) cache.set(cacheKey, genres, 86400)
+    return genres
+  } catch (error) {
+    log.error({ error }, '[HN] Genres fetch failed')
+    return []
   }
-  return resolve(raw)
-}
-
-function collectLandingSeries(resolved) {
-  const out = []
-  const seen = new Set()
-  const walk = (o, depth) => {
-    if (depth > 12 || !o || typeof o !== 'object') return
-    if (Array.isArray(o)) {
-      for (const x of o) walk(x, depth + 1)
-      return
-    }
-    const r = o
-    if (typeof r.url === 'string' && typeof r.title === 'string' && Array.isArray(r.images)) {
-      const url = r.url
-      if (url && !seen.has(url)) {
-        seen.add(url)
-        const images = r.images
-        const genreList = (Array.isArray(r.genreList) ? r.genreList : [])
-        out.push({
-          url,
-          title: r.title,
-          titleEnglish: typeof r.title_english === 'string' ? r.title_english : r.title,
-          visits: Number(r.visits) || 0,
-          poster: pickPoster(images),
-          genres: genreList
-            .filter((g) => g && (g.url || g.name))
-            .map((g) => ({ slug: String(g.url || ''), name: String(g.name || g.url || '') })),
-        })
-      }
-      return
-    }
-    for (const val of Object.values(r)) walk(val, depth + 1)
-  }
-  walk(resolved, 0)
-  return out
 }
 
 export default function createProvider(ctx) {
@@ -246,52 +201,16 @@ export default function createProvider(ctx) {
       const query = (options.query || '').trim()
       const genre = (options.genre || '').trim().toLowerCase()
       const sort = options.sort || ''
-      if (!query) {
-        const cacheKey = 'hn_landing'
-        let landing = cache.get(cacheKey)
-        if (!landing) {
-          const html = await fetchText(`${BASE_URL}/`)
-          const match = html.match(/__NUXT_DATA__">\s*(\[.*?\])\s*<\//s)
-          if (!match) return { shows: [], hasMore: false, genres: [] }
-          const raw = JSON.parse(match[1])
-          landing = collectLandingSeries(resolveNuxtRefs(raw))
-          cache.set(cacheKey, landing, 1800)
-        }
-        const genreSet = new Map()
-        for (const s of landing) {
-          for (const g of s.genres) {
-            if (g.slug && !genreSet.has(g.slug)) genreSet.set(g.slug, g.name)
-          }
-        }
-        const genres = Array.from(genreSet.entries()).map(([slug, name]) => ({ slug, name }))
-        let filtered = landing
-        if (genre) {
-          filtered = landing.filter((s) => s.genres.some((g) => g.slug.toLowerCase() === genre))
-        }
-        if (sort === 'visits:desc') {
-          filtered = [...filtered].sort((a, b) => b.visits - a.visits)
-        } else if (sort === 'title:asc') {
-          filtered = [...filtered].sort((a, b) => a.title.localeCompare(b.title))
-        }
-        const shows = await Promise.all(
-          filtered.map(async (s) => ({
-            _id: s.url,
-            id: s.url,
-            name: s.title,
-            englishName: s.titleEnglish,
-            thumbnail: await resolvePoster(s.url, s.poster),
-            type: 'TV',
-            year: null,
-            isAdult: true,
-            availableEpisodesDetail: { sub: [], dub: [] },
-          }))
-        )
-        return { shows, hasMore: false, genres }
-      }
       const page = Math.max(1, options.page || 1)
       const pageSize = Math.min(20, Math.max(1, options.pageSize || 14))
       const params = new URLSearchParams()
-      params.set('filters[title][$containsi]', query)
+      if (query) {
+        params.set('filters[title][$containsi]', query)
+      } else if (genre) {
+        const facets = await fetchGenreFacets(cache, log)
+        const hit = facets.find((g) => g.slug.toLowerCase() === genre)
+        params.set('filters[genres][$containsi]', hit ? hit.name : genre.replace(/-/g, ' '))
+      }
       params.set('pagination[page]', String(page))
       params.set('pagination[pageSize]', String(pageSize))
       if (sort) params.set('sort', sort)
@@ -316,9 +235,19 @@ export default function createProvider(ctx) {
           availableEpisodesDetail: { sub: [], dub: [] },
         }))
       )
-      const pageCount = res?.meta?.pagination?.pageCount
-      const hasMore = typeof pageCount === 'number' ? page < pageCount : shows.length >= pageSize
-      return { shows, hasMore, genres: [] }
+      const pagination = res?.meta?.pagination
+      const hasMore =
+        typeof pagination?.pageCount === 'number'
+          ? page < pagination.pageCount
+          : shows.length >= pageSize
+      const total = typeof pagination?.total === 'number' ? pagination.total : undefined
+      const genres = await fetchGenreFacets(cache, log)
+      return {
+        shows,
+        hasMore,
+        ...(total !== undefined ? { total } : {}),
+        ...(genres.length > 0 ? { genres } : {}),
+      }
     } catch (error) {
       log.error({ error }, '[HN] Browse failed')
       return { shows: [], hasMore: false, genres: [] }
