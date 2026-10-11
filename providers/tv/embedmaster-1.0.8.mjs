@@ -282,7 +282,6 @@ export default function createProvider() {
 
     const names = direct.map((r) => r.source_name).filter(Boolean)
     const known = [...new Set([...SERVERS.filter((s) => names.includes(s)), ...names])]
-    cfg.embedRows = feed.filter((r) => (cfg.kinds?.[String(r.source_type)] || 'direct') === 'embed')
 
     const pick = server
       ? direct.filter((r) => r.source_name.toLowerCase() === String(server).toLowerCase())
@@ -291,13 +290,13 @@ export default function createProvider() {
     for (const row of candidates) {
       const built = await buildSources(row, cfg)
       if (built && built.sources.length && (await isHealthy(built.probe))) {
-        const fallback = await buildEmbedFallback(cfg)
         return {
-          sources: fallback ? [...built.sources, fallback] : built.sources,
+          sources: built.sources,
           subtitles: built.subtitles,
           referer: ORIGIN,
           server: row.source_name,
           servers: known,
+          embedUrl: embedPlayerUrl(media),
         }
       }
     }
@@ -307,13 +306,8 @@ export default function createProvider() {
   return { name: 'embedmaster', servers: SERVERS, getSources }
 }
 
-async function buildEmbedFallback(cfg) {
-  const embeds = cfg.embedRows || []
-  const ctx = await getSandbox(cfg)
-  for (const row of embeds.slice(0, 2)) {
-    ctx.__EM_PLAYER__ = cfg
-    const hit = await resolve(ctx, cfg, row)
-    if (hit && hit.url) return { url: hit.url, quality: `Embed: ${row.source_name}`, type: 'iframe' }
-  }
-  return null
+function embedPlayerUrl(media) {
+  return media.type === 'movie'
+    ? `${LINK}/movie/${media.tmdbId}`
+    : `${LINK}/tv/${media.tmdbId}/${media.season || 1}/${media.episode || 1}`
 }
