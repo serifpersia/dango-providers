@@ -271,18 +271,27 @@ export default function createProvider() {
     const direct = feed.filter((r) => (cfg.kinds?.[String(r.source_type)] || 'direct') === 'direct')
     if (!direct.length) return null
 
+    const names = direct.map((r) => r.source_name).filter(Boolean)
+    const known = [...new Set([...SERVERS.filter((s) => names.includes(s)), ...names])]
+
     const pick = server
-      ? direct.filter((r) => r.source_name === server || r.source_name.toLowerCase() === server.toLowerCase())
+      ? direct.filter((r) => r.source_name.toLowerCase() === String(server).toLowerCase())
       : []
     const candidates = pick.length ? pick : direct
     for (const row of candidates) {
       const built = await buildSources(row, cfg)
       if (built && built.sources.length && (await isHealthy(built.probe))) {
-        return { sources: built.sources, subtitles: built.subtitles, referer: ORIGIN, server: row.source_name }
+        return {
+          sources: built.sources,
+          subtitles: built.subtitles,
+          referer: ORIGIN,
+          server: row.source_name,
+          servers: known,
+        }
       }
     }
     return null
   }
 
-  return { name: 'embedmaster', servers: SERVERS, getSources }
+  return { name: 'embedmaster', getSources }
 }
