@@ -8,6 +8,19 @@ const TIMEOUT = 15000
 const SAMPLES = 8
 const MIN_HEALTH = 0.6
 
+const SERVERS = [
+  'Premium VidSpark',
+  'Premium Movies4U',
+  'Premium MovieLand',
+  'Premium YesMovies',
+  'Premium Rido',
+  'Premium WMovies',
+  'Premium MovieJoy',
+  'Premium VidStore',
+  'Premium Prime',
+  'Premium FMovies',
+]
+
 function decodeConfig(html) {
   for (const m of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)) {
     const hit = m[1].match(
@@ -271,5 +284,5 @@ export default function createProvider() {
     return null
   }
 
-  return { name: 'embedmaster', getSources }
+  return { name: 'embedmaster', servers: SERVERS, getSources }
 }
