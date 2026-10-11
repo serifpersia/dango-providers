@@ -293,5 +293,5 @@ export default function createProvider() {
     return null
   }
 
-  return { name: 'embedmaster', getSources }
+  return { name: 'embedmaster', servers: SERVERS, getSources }
 }
