@@ -5,8 +5,8 @@ const ORIGIN = 'https://embdmstrplayer.com'
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 const TIMEOUT = 15000
-const SAMPLES = 8
-const MIN_HEALTH = 0.6
+const SAMPLES = 4
+const MIN_HEALTH = 0.5
 
 const SERVERS = [
   'Premium VidSpark',
@@ -303,7 +303,12 @@ export default function createProvider() {
     return null
   }
 
-  return { name: 'embedmaster', servers: SERVERS, getSources }
+  return {
+    name: 'embedmaster',
+    servers: SERVERS,
+    getSources,
+    getEmbedUrl: async (media) => embedPlayerUrl(media),
+  }
 }
 
 function embedPlayerUrl(media) {
