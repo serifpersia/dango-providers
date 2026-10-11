@@ -8,17 +8,6 @@ const TIMEOUT = 15000
 const SAMPLES = 8
 const MIN_HEALTH = 0.6
 
-const SERVERS = [
-  'Premium YesMovies',
-  'Premium VidStore',
-  'Premium Movies4U',
-  'Premium WMovies',
-  'Premium MovieLand',
-  'Premium VidSpark',
-  'Premium FMovies',
-  'Premium MovieJoy',
-]
-
 function decodeConfig(html) {
   for (const m of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)) {
     const hit = m[1].match(
@@ -269,8 +258,11 @@ export default function createProvider() {
     const direct = feed.filter((r) => (cfg.kinds?.[String(r.source_type)] || 'direct') === 'direct')
     if (!direct.length) return null
 
-    const wanted = direct.filter((r) => String(r.source_name).toLowerCase() === String(server).toLowerCase())
-    for (const row of wanted.length ? wanted : direct) {
+    const pick = server
+      ? direct.filter((r) => r.source_name === server || r.source_name.toLowerCase() === server.toLowerCase())
+      : []
+    const candidates = pick.length ? pick : direct
+    for (const row of candidates) {
       const built = await buildSources(row, cfg)
       if (built && built.sources.length && (await isHealthy(built.probe))) {
         return { sources: built.sources, subtitles: built.subtitles, referer: ORIGIN, server: row.source_name }
@@ -279,5 +271,5 @@ export default function createProvider() {
     return null
   }
 
-  return { name: 'embedmaster', servers: SERVERS, getSources }
+  return { name: 'embedmaster', getSources }
 }

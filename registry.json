@@ -1,5 +1,5 @@
 {
-  "version": 26,
+  "version": 27,
   "updatedAt": "2026-10-03T15:19:09Z",
   "providers": [
     {
@@ -246,9 +246,9 @@
     {
       "id": "embedmaster",
       "label": "EmbedMaster",
-      "version": "1.0.1",
-      "entry": "providers/tv/embedmaster-1.0.1.mjs",
-      "sha256": "439f8dfedfe0d39dbc2d00fc4da484bf1ab5c3a420defaf8609bf7be72c0e6c5",
+      "version": "1.0.2",
+      "entry": "providers/tv/embedmaster-1.0.2.mjs",
+      "sha256": "ec37df83305cf737a81aea5705355eb754decc10dc5721d5269b0137a5c39dfd",
       "mature": false,
       "kind": "tv",
       "tier": "direct",
