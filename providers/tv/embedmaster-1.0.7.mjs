@@ -111,7 +111,10 @@ async function getSandbox(cfg) {
   }
   XHR.prototype.abort = function () {}
   XHR.prototype.send = function () {
-    fetch(this._url, { headers: this._h })
+    fetch(this._url, {
+      headers: this._h,
+      signal: AbortSignal.timeout(TIMEOUT),
+    })
       .then(async (r) => {
         this.readyState = 4
         this.status = r.status
@@ -150,9 +153,15 @@ async function getSandbox(cfg) {
 
 async function resolve(ctx, cfg, row) {
   const url = `${new URL(cfg.resolveUrl, ORIGIN).href}?src=${encodeURIComponent(row.source_url)}`
-  const data = await new Promise((done) => {
-    ctx.EMFetch(url, (err, d) => done(err ? null : d))
-  })
+  let timer
+  const data = await Promise.race([
+    new Promise((done) => {
+      ctx.EMFetch(url, (err, d) => done(err ? null : d))
+    }),
+    new Promise((done) => {
+      timer = setTimeout(() => done(null), TIMEOUT)
+    }),
+  ]).finally(() => clearTimeout(timer))
   if (!data || !data.ok || !data.url) return null
   return {
     url: data.url,
@@ -301,7 +310,7 @@ export default function createProvider() {
 async function buildEmbedFallback(cfg) {
   const embeds = cfg.embedRows || []
   const ctx = await getSandbox(cfg)
-  for (const row of embeds) {
+  for (const row of embeds.slice(0, 2)) {
     ctx.__EM_PLAYER__ = cfg
     const hit = await resolve(ctx, cfg, row)
     if (hit && hit.url) return { url: hit.url, quality: `Embed: ${row.source_name}`, type: 'iframe' }
