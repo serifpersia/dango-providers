@@ -54,8 +54,7 @@ export default function createProvider(ctx) {
       if (lastPart) {
         return lastPart.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '')
       }
-    } catch {
-    }
+    } catch {}
     return null
   }
 

@@ -93,15 +93,11 @@ export default function createProvider(ctx) {
       const cached = cache.get(cacheKey)
       if (cached) return cached
 
-      const first = await getApi(
-        `/anime/${encodeURIComponent(id)}/episodes?page=1`
-      )
+      const first = await getApi(`/anime/${encodeURIComponent(id)}/episodes?page=1`)
       const totalPages = Math.max(1, Number(first.totalPages) || 1)
       const rest = await Promise.all(
         Array.from({ length: totalPages - 1 }, (_, i) =>
-          getApi(
-            `/anime/${encodeURIComponent(id)}/episodes?page=${i + 2}`
-          )
+          getApi(`/anime/${encodeURIComponent(id)}/episodes?page=${i + 2}`)
         )
       )
       const seen = new Map()

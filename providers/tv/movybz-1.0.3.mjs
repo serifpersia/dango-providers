@@ -74,7 +74,7 @@ function decodeMovyPayload(e, t, a) {
     })(e, t)
     const r = new Uint8Array(a)
     let n = 0
-    for (let e = 0; e < a; ) {
+    for (let e = 0; e < a;) {
       const t = (function (e, t) {
         const r = e.S
         let n = e.acc
@@ -105,7 +105,7 @@ function decodeMovyPayload(e, t, a) {
   return Buffer.from(r.subarray(MOVY_MAGIC.length)).toString('utf8')
 }
 
-export default function createProvider(ctx) {
+export default function createProvider(_ctx) {
   const seedCache = new Map()
   const inflightSeeds = new Map()
 
@@ -293,10 +293,7 @@ export default function createProvider(ctx) {
       baseParams.seasonId = String(media.season || 1)
       baseParams.episodeId = String(media.episode || 1)
     }
-    const cities =
-      server && MOVY_SERVERS.includes(server)
-        ? [server]
-        : MOVY_SERVERS
+    const cities = server && MOVY_SERVERS.includes(server) ? [server] : MOVY_SERVERS
     for (const city of cities) {
       const result = await tryMovyCity(city, baseParams, seed, numericTmdbId)
       if (result) return { ...result, referer: 'https://www.movy.sx/', server: city }

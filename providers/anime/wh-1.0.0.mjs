@@ -243,27 +243,6 @@ export default function createProvider(ctx) {
   const cache = ctx.cache
   const log = ctx.logger
 
-  function bestMatch(results, query) {
-    if (!results.length) return null
-    if (results.length === 1) return { ...results[0], score: 0 }
-    const q = query.toLowerCase().trim()
-    let best = results[0]
-    let bestScore = -1
-    for (const item of results) {
-      const title = item.title.toLowerCase()
-      let score = -1
-      if (title === q) score = 3
-      else if (title.startsWith(q)) score = 2
-      else if (title.includes(q)) score = 1
-      if (score > bestScore) {
-        bestScore = score
-        best = item
-        if (score === 3) break
-      }
-    }
-    return { ...best, score: bestScore }
-  }
-
   async function browse(options) {
     try {
       const query = (options.query || '').trim()
@@ -336,7 +315,7 @@ export default function createProvider(ctx) {
     })
   }
 
-  async function getEpisodes(showId, mode) {
+  async function getEpisodes(showId, _mode) {
     try {
       if (!showId) return null
       const cacheKey = `wh_eps_${showId}`
@@ -424,7 +403,7 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function getStreamUrls(showId, episodeNumber, mode) {
+  async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       let targetEpisode = episodeNumber
       if (episodeNumber === '0') targetEpisode = '1'
@@ -463,8 +442,7 @@ export default function createProvider(ctx) {
             signal: AbortSignal.timeout(30000),
           })
           if (res.ok) playerHtml = await res.text()
-        } catch {
-        }
+        } catch {}
       }
       const links = []
       if (plyrUrlMatch) {
@@ -483,8 +461,7 @@ export default function createProvider(ctx) {
                 headers: { Referer: BASE_URL + '/' },
               })
             }
-          } catch {
-          }
+          } catch {}
         }
         if (links.length === 0) {
           const seen = new Set()

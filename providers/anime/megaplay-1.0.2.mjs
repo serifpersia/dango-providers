@@ -130,7 +130,7 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function resolveShowId(title, romaji, mode) {
+  async function resolveShowId(title, _romaji, _mode) {
     const results = await search({ query: title })
     return results[0]?._id || null
   }
@@ -139,7 +139,7 @@ export default function createProvider(ctx) {
     return /^\d+$/.test(showId.trim())
   }
 
-  async function getEpisodes(showId, mode) {
+  async function getEpisodes(showId, _mode) {
     try {
       if (!/^\d+$/.test(showId)) return null
       const cacheKey = `megaplay_eps_${showId}`
@@ -184,11 +184,7 @@ export default function createProvider(ctx) {
       (_, unicode, hex, escaped) => {
         if (unicode) return String.fromCharCode(parseInt(unicode, 16))
         if (hex) return String.fromCharCode(parseInt(hex, 16))
-        return (
-          (
-            { b: '\b', n: '\n', f: '\f', r: '\r', t: '\t', v: '\v', 0: '\0' }
-          )[escaped] ?? escaped
-        )
+        return { b: '\b', n: '\n', f: '\f', r: '\r', t: '\t', v: '\v', 0: '\0' }[escaped] ?? escaped
       }
     )
   }
@@ -292,7 +288,7 @@ export default function createProvider(ctx) {
       const parsed = ctx.crypto.aes256CbcDecryptJson(enc, keyValue, ivValue)
       if (!parsed) return null
       const source = parsed?.file ?? parsed?.url
-      return (typeof source === 'string' && source) ? source : null
+      return typeof source === 'string' && source ? source : null
     }
     const cachedPair = cache.get('megaplay_crypt_pair')
     if (cachedPair) {
@@ -338,7 +334,7 @@ export default function createProvider(ctx) {
           signal: AbortSignal.timeout(15000),
         })
         if (!res.ok) return null
-        return (await res.json())
+        return await res.json()
       } catch {
         return null
       }
@@ -388,8 +384,7 @@ export default function createProvider(ctx) {
         cache.set(cacheKey, result, 86400)
         return result
       }
-    } catch {
-    }
+    } catch {}
     try {
       const fb = await ctx.kitsu.metaByAnilistId(Number(anilistId))
       if (fb?.idMal) {
@@ -397,8 +392,7 @@ export default function createProvider(ctx) {
         cache.set(cacheKey, result, 86400)
         return result
       }
-    } catch {
-    }
+    } catch {}
     cache.set(cacheKey, '', 3600)
     return null
   }
@@ -478,8 +472,7 @@ export default function createProvider(ctx) {
               })
             }
           }
-        } catch {
-        }
+        } catch {}
         links.push({
           resolutionStr: 'Auto',
           link: s.file,
@@ -502,9 +495,7 @@ export default function createProvider(ctx) {
       }
     }
     const cdnOrigin = (() => {
-      const first = links.find(
-        (l) => typeof l.link === 'string' && /^https?:\/\//i.test(l.link)
-      )
+      const first = links.find((l) => typeof l.link === 'string' && /^https?:\/\//i.test(l.link))
       if (!first) return null
       try {
         return new URL(first.link).origin

@@ -292,7 +292,7 @@ export default function createProvider(ctx) {
     })
   }
 
-  async function getEpisodes(showId, mode) {
+  async function getEpisodes(showId, _mode) {
     try {
       if (!showId) return null
       const cacheKey = `op_eps_${showId}`
@@ -335,7 +335,7 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function getStreamUrls(showId, episodeNumber, mode) {
+  async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       const cacheKey = `op_stream_${showId}_${episodeNumber}`
       const cached = cache.get(cacheKey)
@@ -358,8 +358,8 @@ export default function createProvider(ctx) {
           const raw = availResMatch[1].replace(/\\\//g, '/')
           const availRes = JSON.parse(raw)
           const qualityMap = {
-            '720': '720p',
-            '1080': '1080p',
+            720: '720p',
+            1080: '1080p',
             '4k': '4K',
           }
           for (const [key, videoUrl] of Object.entries(availRes)) {
@@ -371,8 +371,7 @@ export default function createProvider(ctx) {
           links.sort(
             (a, b) => (resOrder[a.resolutionStr] || 99) - (resOrder[b.resolutionStr] || 99)
           )
-        } catch {
-        }
+        } catch {}
       }
       if (links.length === 0) {
         const sourceRe = /src="(https?:\/\/[^"]+\.(mp4|webm)[^"]*)"/gi

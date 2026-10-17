@@ -60,12 +60,19 @@ for (let i = 0; i < args.length; i++) {
     console.error(`unknown flag ${a}`)
     process.exit(2)
   } else {
-    opts.ids.push(...a.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean))
+    opts.ids.push(
+      ...a
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
+    )
   }
 }
 opts.mode = opts.mode === 'dub' ? 'dub' : 'sub'
 if (process.env.PROBE_DEBUG) {
-  console.error(`[debug] ua=${opts.ua ? `len=${opts.ua.length}` : 'MISSING'} cookie=${opts.cookie ? `len=${opts.cookie.length}` : 'MISSING'} title=${opts.title}`)
+  console.error(
+    `[debug] ua=${opts.ua ? `len=${opts.ua.length}` : 'MISSING'} cookie=${opts.cookie ? `len=${opts.cookie.length}` : 'MISSING'} title=${opts.title}`
+  )
 }
 
 const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'registry.json'), 'utf8'))
@@ -120,7 +127,9 @@ async function getGotScraping() {
       gotScrapingMod = null
     }
     if (!gotScrapingMod) {
-      console.log('  [note] got-scraping not installed, plain fetch may fail Cloudflare (npm install got-scraping)')
+      console.log(
+        '  [note] got-scraping not installed, plain fetch may fail Cloudflare (npm install got-scraping)'
+      )
     }
   }
   return gotScrapingMod
@@ -195,7 +204,10 @@ async function searchAnilistByTitle(title) {
 async function kitsuMetaByAnilistId(anilistId) {
   const res = await fetch(
     `https://kitsu.io/api/edge/mappings?filter[externalSite]=anilist%2Fanime&filter[externalId]=${anilistId}&include=item`,
-    { headers: { Accept: 'application/vnd.api+json', 'User-Agent': UA_DEFAULT }, signal: AbortSignal.timeout(opts.timeout) }
+    {
+      headers: { Accept: 'application/vnd.api+json', 'User-Agent': UA_DEFAULT },
+      signal: AbortSignal.timeout(opts.timeout),
+    }
   )
   if (!res.ok) return null
   const json = await res.json()
@@ -210,7 +222,12 @@ async function kitsuMetaByAnilistId(anilistId) {
 
 function sanitizeCfClearance(raw) {
   if (!raw) return ''
-  return String(raw).trim().replace(/^cf_clearance/i, '').replace(/^[:=]\s*/, '').replace(/["']/g, '').trim()
+  return String(raw)
+    .trim()
+    .replace(/^cf_clearance/i, '')
+    .replace(/^[:=]\s*/, '')
+    .replace(/["']/g, '')
+    .trim()
 }
 
 function buildCfClearanceCookie(raw) {
@@ -230,14 +247,20 @@ function aes256CbcDecryptJson(b64url, keyUtf8, ivUtf8) {
     const key = Buffer.alloc(32)
     Buffer.from(keyUtf8).copy(key)
     const decipher = crypto.createDecipheriv('aes-256-cbc', key, Buffer.from(ivUtf8))
-    return JSON.parse(Buffer.concat([decipher.update(encrypted), decipher.final()]).toString('utf8'))
+    return JSON.parse(
+      Buffer.concat([decipher.update(encrypted), decipher.final()]).toString('utf8')
+    )
   } catch {
     return null
   }
 }
 
 function base64UrlEncode(input) {
-  return Buffer.from(input).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return Buffer.from(input)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
 }
 
 function makeCtx() {
@@ -327,7 +350,9 @@ function makeCtx() {
       fetch: async (urlOrOptions, maybeOptions) => {
         const gs = await getGotScraping()
         if (process.env.PROBE_DEBUG) {
-          console.error(`[debug] scraping via ${gs ? 'got-scraping' : 'plain-fetch'}: ${typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions.url}`)
+          console.error(
+            `[debug] scraping via ${gs ? 'got-scraping' : 'plain-fetch'}: ${typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions.url}`
+          )
         }
         if (gs) {
           const res =
@@ -344,12 +369,19 @@ function makeCtx() {
           }
           return { statusCode: res.statusCode, body: String(res.body ?? ''), headers: res.headers }
         }
-        const o = typeof urlOrOptions === 'string' ? { url: urlOrOptions, ...(maybeOptions ?? {}) } : urlOrOptions
+        const o =
+          typeof urlOrOptions === 'string'
+            ? { url: urlOrOptions, ...(maybeOptions ?? {}) }
+            : urlOrOptions
         const res = await timedFetch(o.url, { method: o.method ?? 'GET', headers: o.headers })
         if (process.env.PROBE_DEBUG) {
           console.error(`[debug] plain status: ${res.status}`)
         }
-        return { statusCode: res.status, body: await res.text(), headers: Object.fromEntries(res.headers) }
+        return {
+          statusCode: res.status,
+          body: await res.text(),
+          headers: Object.fromEntries(res.headers),
+        }
       },
     },
     curl: {
@@ -370,7 +402,8 @@ function makeCtx() {
     },
     cheerio: {
       load: (html) => {
-        if (!cheerioMod) throw new Error('cheerio is required for this provider: run `npm install cheerio`')
+        if (!cheerioMod)
+          throw new Error('cheerio is required for this provider: run `npm install cheerio`')
         return cheerioMod.load(html)
       },
     },
@@ -379,9 +412,16 @@ function makeCtx() {
 
 function curlRaw(url, headers) {
   const args = [
-    '-sSL', '-A', UA_DEFAULT,
+    '-sSL',
+    '-A',
+    UA_DEFAULT,
     ...Object.entries(headers ?? {}).flatMap(([k, v]) => ['-H', `${k}: ${v}`]),
-    '--max-time', '15', '-w', '\n__HTTP_STATUS__%{http_code}', '--', url,
+    '--max-time',
+    '15',
+    '-w',
+    '\n__HTTP_STATUS__%{http_code}',
+    '--',
+    url,
   ]
   let out
   try {
@@ -390,7 +430,10 @@ function curlRaw(url, headers) {
     return null
   }
   const m = out.match(/__HTTP_STATUS__(\d+)\s*$/)
-  return { status: m ? parseInt(m[1], 10) : 0, body: m?.index !== undefined ? out.slice(0, m.index) : out }
+  return {
+    status: m ? parseInt(m[1], 10) : 0,
+    body: m?.index !== undefined ? out.slice(0, m.index) : out,
+  }
 }
 
 function isAuthError(e) {
@@ -400,7 +443,8 @@ function isAuthError(e) {
 async function testVideo(p, factory) {
   const notes = []
   const search = await factory.search({ query: opts.title })
-  if (!search || search.length === 0) return { status: 'SKIP', notes: [`no results for "${opts.title}"`] }
+  if (!search || search.length === 0)
+    return { status: 'SKIP', notes: [`no results for "${opts.title}"`] }
   notes.push(`search: ${search.length} hits`)
   let romaji
   try {
@@ -417,8 +461,11 @@ async function testVideo(p, factory) {
   const ep = opts.episode ?? eps.episodes[0]
   const streams = await factory.getStreamUrls(id, String(ep), opts.mode)
   const links = (streams ?? []).reduce((n, s) => n + (s.links?.length ?? 0), 0)
-  if (!streams?.length || links === 0) return { status: 'FAIL', notes: [...notes, `ep ${ep}: no streams`] }
-  notes.push(`ep ${ep}: ${(streams ?? []).map((s) => `${s.sourceName}[${s.links?.length ?? 0}]`).join(' | ')}`)
+  if (!streams?.length || links === 0)
+    return { status: 'FAIL', notes: [...notes, `ep ${ep}: no streams`] }
+  notes.push(
+    `ep ${ep}: ${(streams ?? []).map((s) => `${s.sourceName}[${s.links?.length ?? 0}]`).join(' | ')}`
+  )
   return { status: 'PASS', notes }
 }
 
@@ -430,11 +477,13 @@ async function testManga(p, factory) {
   const detail = await factory.getDetail(res.items[0].id)
   if (!detail) return { status: 'FAIL', notes: [...notes, 'getDetail returned null'] }
   notes.push(`detail: ${detail.chapters?.length ?? 0} chapters`)
-  if (!detail.chapters?.length) return { status: 'PASS', notes: [...notes, 'no chapters to test pages'] }
+  if (!detail.chapters?.length)
+    return { status: 'PASS', notes: [...notes, 'no chapters to test pages'] }
   const readable = detail.chapters.filter((c) => !c.externalUrl).slice(0, 5)
   if (!readable.length) return { status: 'PASS', notes: [...notes, 'chapters are external-only'] }
   const pages = await factory.getPages(readable[0].id)
-  if (!pages?.length) return { status: 'FAIL', notes: [...notes, `getPages empty (ch ${readable[0].number})`] }
+  if (!pages?.length)
+    return { status: 'FAIL', notes: [...notes, `getPages empty (ch ${readable[0].number})`] }
   notes.push(`pages: ${pages.length} (ch ${readable[0].number})`)
   return { status: 'PASS', notes }
 }
@@ -445,8 +494,12 @@ async function testTv(p, factory) {
   let tmdbId = opts.tmdb ? Number(opts.tmdb) : 0
   let mediaType = opts.mediaType === 'movie' ? 'movie' : opts.mediaType === 'tv' ? 'tv' : ''
   if (!tmdbId) {
-    const found = await ctx.tmdb.get(`/search/multi?query=${encodeURIComponent(opts.title)}&page=1&include_adult=true`)
-    const hit = (found?.results ?? []).find((r) => r.media_type === 'movie' || r.media_type === 'tv')
+    const found = await ctx.tmdb.get(
+      `/search/multi?query=${encodeURIComponent(opts.title)}&page=1&include_adult=true`
+    )
+    const hit = (found?.results ?? []).find(
+      (r) => r.media_type === 'movie' || r.media_type === 'tv'
+    )
     if (!hit) return { status: 'SKIP', notes: [`no tmdb results for "${opts.title}"`] }
     tmdbId = hit.id
     if (!mediaType) mediaType = hit.media_type
@@ -454,7 +507,8 @@ async function testTv(p, factory) {
   }
   if (!mediaType) mediaType = 'tv'
   const details = await ctx.tmdb.get(`/${mediaType}/${tmdbId}?append_to_response=external_ids`)
-  if (!details) return { status: 'FAIL', notes: [...notes, `tmdb ${mediaType}/${tmdbId} lookup failed`] }
+  if (!details)
+    return { status: 'FAIL', notes: [...notes, `tmdb ${mediaType}/${tmdbId} lookup failed`] }
   const media = {
     tmdbId,
     type: mediaType,
@@ -465,12 +519,17 @@ async function testTv(p, factory) {
     imdbId: details.external_ids?.imdb_id || details.imdb_id || '',
     totalSeasons: details.number_of_seasons || 1,
   }
-  notes.push(`media: ${media.title} ${media.year} s${media.season}e${media.episode} imdb:${media.imdbId || 'n/a'}`)
+  notes.push(
+    `media: ${media.title} ${media.year} s${media.season}e${media.episode} imdb:${media.imdbId || 'n/a'}`
+  )
   if (typeof factory.getSources === 'function') {
     const res = await factory.getSources(media, opts.server)
-    if (!res?.sources?.length) return { status: 'FAIL', notes: [...notes, 'getSources returned no sources'] }
+    if (!res?.sources?.length)
+      return { status: 'FAIL', notes: [...notes, 'getSources returned no sources'] }
     const types = [...new Set(res.sources.map((s) => s.type))].join(',')
-    notes.push(`sources: ${res.sources.length} (${types})${res.server ? ` via ${res.server}` : ''} audio:${(res.audioTracks ?? []).length} subs:${(res.subtitles ?? []).length}`)
+    notes.push(
+      `sources: ${res.sources.length} (${types})${res.server ? ` via ${res.server}` : ''} audio:${(res.audioTracks ?? []).length} subs:${(res.subtitles ?? []).length}`
+    )
     return { status: 'PASS', notes }
   }
   if (typeof factory.getEmbedUrl === 'function') {
@@ -499,12 +558,22 @@ function makeEmbedFactory(id, base) {
 }
 
 for (const entry of wanted) {
-  const fail = (detail) => ({ id: entry.id, version: entry.version, status: 'FAIL', notes: [detail] })
+  const fail = (detail) => ({
+    id: entry.id,
+    version: entry.version,
+    status: 'FAIL',
+    notes: [detail],
+  })
   if (entry.embedBase && !entry.entry) {
     try {
       const factory = makeEmbedFactory(entry.id, entry.embedBase)()
       const r = await testTv(entry, factory)
-      results.push({ id: entry.id, version: entry.version, ...r, notes: [`embed: ${entry.embedBase}`, ...r.notes] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        ...r,
+        notes: [`embed: ${entry.embedBase}`, ...r.notes],
+      })
     } catch (e) {
       results.push(fail(`${e?.message ?? e}`))
     }
@@ -519,7 +588,11 @@ for (const entry of wanted) {
     const bytes = fs.readFileSync(file)
     const actual = crypto.createHash('sha256').update(bytes).digest('hex')
     if (entry.sha256 && actual !== entry.sha256.toLowerCase()) {
-      results.push(fail(`sha256 mismatch (registry ${entry.sha256.slice(0, 12)}… vs file ${actual.slice(0, 12)}…)`))
+      results.push(
+        fail(
+          `sha256 mismatch (registry ${entry.sha256.slice(0, 12)}… vs file ${actual.slice(0, 12)}…)`
+        )
+      )
       continue
     }
     const mod = await import(pathToFileURL(file).href)
@@ -532,19 +605,44 @@ for (const entry of wanted) {
     const factory = mod.default(makeCtx())
     if (entry.kind === 'manga') {
       const r = await testManga(entry, factory)
-      results.push({ id: entry.id, version: entry.version, ...r, notes: [...noteLines, ...r.notes] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        ...r,
+        notes: [...noteLines, ...r.notes],
+      })
     } else if (entry.kind === 'tv') {
       const r = await testTv(entry, factory)
-      results.push({ id: entry.id, version: entry.version, ...r, notes: [...noteLines, ...r.notes] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        ...r,
+        notes: [...noteLines, ...r.notes],
+      })
     } else {
       const r = await testVideo(entry, factory)
-      results.push({ id: entry.id, version: entry.version, ...r, notes: [...noteLines, ...r.notes] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        ...r,
+        notes: [...noteLines, ...r.notes],
+      })
     }
   } catch (e) {
     if (isAuthError(e)) {
-      results.push({ id: entry.id, version: entry.version, status: 'AUTH', notes: ['site demands cookie — rerun with --cookie (and --ua)'] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        status: 'AUTH',
+        notes: ['site demands cookie — rerun with --cookie (and --ua)'],
+      })
     } else if (String(e?.message ?? e).startsWith('HTTP 429')) {
-      results.push({ id: entry.id, version: entry.version, status: 'RATE-LIMITED', notes: ['site throttled the probe — wait a minute and rerun'] })
+      results.push({
+        id: entry.id,
+        version: entry.version,
+        status: 'RATE-LIMITED',
+        notes: ['site throttled the probe — wait a minute and rerun'],
+      })
     } else {
       results.push(fail(`${e?.message ?? e}`))
     }
@@ -561,6 +659,15 @@ if (opts.json) {
   }
   const counts = {}
   for (const r of results) counts[r.status] = (counts[r.status] ?? 0) + 1
-  console.log(`\n${results.length} tested: ` + Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(', '))
+  console.log(
+    `\n${results.length} tested: ` +
+      Object.entries(counts)
+        .map(([k, v]) => `${v} ${k}`)
+        .join(', ')
+  )
 }
-process.exit(results.some((r) => r.status === 'FAIL' || r.status === 'AUTH' || r.status === 'RATE-LIMITED') ? 1 : 0)
+process.exit(
+  results.some((r) => r.status === 'FAIL' || r.status === 'AUTH' || r.status === 'RATE-LIMITED')
+    ? 1
+    : 0
+)

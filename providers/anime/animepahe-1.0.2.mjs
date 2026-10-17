@@ -40,38 +40,36 @@ export default function createProvider(ctx) {
     return headers
   }
 
+  const CF_BLOCK =
+    /_cf_chl_opt|cf-error-details|cf-browser-verification|cf-please-wait|Attention Required! \| Cloudflare|Just a moment\.\.\./i
+
   async function fetchText(url, isApi = false, ua, cookie) {
     const headers = await getRequestHeaders(isApi, ua, cookie)
     for (let attempt = 0; ; attempt++) {
-      let response
-      try {
-        response = await ctx.scraping.fetch(url, {
-          method: 'GET',
-          headers,
-          responseType: 'text',
-        })
-      } catch (error) {
-        if (error.message === 'AUTH_REQUIRED') throw error
-        log.error({ url, error: error.message }, 'AnimePahe Fetch failed')
-        throw error
-      }
+      const response = await ctx.scraping.fetch(url, {
+        method: 'GET',
+        headers,
+        responseType: 'text',
+      })
 
       const text = response.body
+      if (
+        response.headers?.['cf-mitigated'] === 'challenge' ||
+        (typeof text === 'string' && CF_BLOCK.test(text))
+      ) {
+        const error = new Error('AUTH_REQUIRED')
+        error.status = 403
+        log.error(
+          { url, statusCode: response.statusCode },
+          'AnimePahe Cloudflare challenge — cf_clearance expired'
+        )
+        throw error
+      }
 
       if (response.statusCode === 200) return text
       if (response.statusCode === 429 && attempt < 3) {
         await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)))
         continue
-      }
-      if (response.statusCode === 429) {
-        const error = new Error('HTTP 429')
-        log.error({ url, error: error.message }, 'AnimePahe rate limited')
-        throw error
-      }
-      if (response.statusCode === 403 || text.includes('Cloudflare')) {
-        const error = new Error('AUTH_REQUIRED')
-        error.status = 403
-        throw error
       }
       const error = new Error(`HTTP ${response.statusCode}`)
       log.error({ url, error: error.message }, 'AnimePahe Fetch failed')
@@ -219,17 +217,14 @@ export default function createProvider(ctx) {
       const resolved = await Promise.all(
         matched.map(async (src) => {
           try {
-            const r = await resolveKwik(src.url, reqUa, rawCookie)
+            const r = await resolveKwik(src.url, reqUa)
             if (!r.m3u8) return null
             const directLink = cookieValue
               ? `/api/proxy?url=${encodeURIComponent(r.m3u8)}&referer=${encodeURIComponent(r.referer)}&cookie=${encodeURIComponent(cookieValue)}`
               : `/api/proxy?url=${encodeURIComponent(r.m3u8)}&referer=${encodeURIComponent(r.referer)}`
             return { src, directLink }
           } catch (e) {
-            log.error(
-              { url: src.url, error: e.message },
-              '[AnimePahe] direct resolve failed'
-            )
+            log.error({ url: src.url, error: e.message }, '[AnimePahe] direct resolve failed')
             return null
           }
         })
@@ -309,12 +304,13 @@ export default function createProvider(ctx) {
       })
 
       return unique
-    } catch {
+    } catch (e) {
+      if (e.message === 'AUTH_REQUIRED') throw e
       return []
     }
   }
 
-  async function resolveKwik(kwikUrl, ua, cookie) {
+  async function resolveKwik(kwikUrl, ua) {
     try {
       const headers = {
         'User-Agent':
@@ -364,8 +360,7 @@ export default function createProvider(ctx) {
             const m = result.match(/source\s*=\s*['"]([^'"]+\.m3u8[^'"]*)['"]/)
             if (m) return { m3u8: m[1], referer: kwikUrl }
           }
-        } catch {
-        }
+        } catch {}
         searchFrom = parenEnd + 1
       }
       return { m3u8: '', referer: kwikUrl }

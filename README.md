@@ -11,12 +11,28 @@ registry.json
 ctx.d.ts
 sha.mjs
 probe.mjs
+eslint.config.mjs
 providers/
   anime/    video providers
   manga/    manga providers
   asmr/     audio providers
-  tv/       tv providers
+  tv/       TV providers
 ```
+
+## Checks
+
+```sh
+npm install
+npm run check          # eslint + prettier --check + sha.mjs
+npm run lint           # eslint .        (lint:fix to autofix)
+npm run format         # prettier --write .
+npm run sha:write      # recompute shas after editing a provider
+```
+
+Format/lint before pushing: `registry.json` is excluded from prettier
+because `sha.mjs --write` owns its formatting. Unused contract params are
+prefixed with `_` (`getEpisodes(showId, _mode)`); eslint's `no-unused-vars`
+is configured to allow that, everything else must be used.
 
 ## registry.json
 
@@ -59,7 +75,7 @@ providers/
 - `modes`: subset of `["sub", "dub"]` (defaults to both).
 - `browse` (optional): declares which browse filters dango renders —
   `{ "genre": true, "order": true, "studio": true, "sort": true,
-  "pageSize": 24 }`. Filter values come from the module's `*_GENRES`,
+"pageSize": 24 }`. Filter values come from the module's `*_GENRES`,
   `*_TAGS`, `*_ORDERS` string-array exports (no registry change needed).
 - `enabledByDefault`: `false` ships the provider disabled.
 
@@ -153,12 +169,12 @@ hand-synced on every `createCtx` change.
 
 Per-request auth state — `ctx.request.get(key)`:
 
-| key            | populated from client header | meaning when missing                   |
-| -------------- | ---------------------------- | -------------------------------------- |
-| `ua`           | `x-animepahe-ua`             | no animepahe UA (treat as logged out)  |
+| key            | populated from client header | meaning when missing                     |
+| -------------- | ---------------------------- | ---------------------------------------- |
+| `ua`           | `x-animepahe-ua`             | no animepahe UA (treat as logged out)    |
 | `cookie`       | `x-animepahe-cookie`         | no animepahe cookie (AUTH_REQUIRED path) |
-| `jasmr_ua`     | `x-jasmr-ua`                 | no jasmr UA                            |
-| `jasmr_cookie` | `x-jasmr-cookie`             | no jasmr cookie (AUTH_REQUIRED path)   |
+| `jasmr_ua`     | `x-jasmr-ua`                 | no jasmr UA                              |
+| `jasmr_cookie` | `x-jasmr-cookie`             | no jasmr cookie (AUTH_REQUIRED path)     |
 
 Only these four keys exist. Throw `new Error('AUTH_REQUIRED')` when a
 site demands a missing cookie; dango maps it to the login modal.
@@ -188,5 +204,5 @@ better `--title`) | `AUTH` (site demands a cookie) | `RATE-LIMITED`.
 
 The probe mirrors dango's host context except `scraping.fetch` (plain
 `fetch`, no got-scraping fingerprints) and the title matcher (compact
-equivalent). `cheerio` loads lazily, needed only for `animepahe`/
-`animeya`: `npm install cheerio`.
+equivalent). `cheerio` and `got-scraping` are devDependencies — `npm install`
+covers them.

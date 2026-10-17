@@ -61,9 +61,10 @@ export interface RemoteCtx {
   anilist: {
     request<T>(query: string, vars?: Record<string, unknown>): Promise<AnilistResponse<T>>
     parseMalId(id: string | number): number | null
-    searchByTitle(
-      title: string
-    ): Promise<{ id: number; title?: { romaji?: string; english?: string; native?: string } } | null>
+    searchByTitle(title: string): Promise<{
+      id: number
+      title?: { romaji?: string; english?: string; native?: string }
+    } | null>
   }
   kitsu: {
     metaByAnilistId(anilistId: number): Promise<unknown>

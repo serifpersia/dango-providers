@@ -66,11 +66,9 @@ export default function createProvider(ctx) {
         try {
           const page = await fetchText(candidate, url)
           extractM3u8FromText(page).forEach((u) => hls.add(u))
-        } catch {
-        }
+        } catch {}
       }
-    } catch {
-    }
+    } catch {}
 
     return {
       sourceUrl: url,
@@ -119,11 +117,7 @@ export default function createProvider(ctx) {
       if (typeof node !== 'object') return
 
       const record = node
-      const url = record.url ||
-        record.src ||
-        record.file ||
-        record.subtitleUrl ||
-        record.subUrl
+      const url = record.url || record.src || record.file || record.subtitleUrl || record.subUrl
       if (typeof url === 'string' && url.trim()) {
         const lang =
           String(
@@ -177,8 +171,7 @@ export default function createProvider(ctx) {
         if (!slug.includes('-') && slug.length > 12) return
         seen.add(slug)
         const img = $(a).find('img').first()
-        const title =
-          img.attr('alt')?.trim() || $(a).find('h3').first().text().trim() || 'Unknown'
+        const title = img.attr('alt')?.trim() || $(a).find('h3').first().text().trim() || 'Unknown'
         const cover = img.attr('src') || ''
         const count = parseInt($(a).find('[data-slot="badge"]').first().text().trim(), 10)
         const type = $(a).find('p.ml-auto').first().text().trim() || 'TV'
@@ -287,8 +280,7 @@ export default function createProvider(ctx) {
         }
         if (eps.length < pageSize || (epTotal > 0 && details.episodes.length >= epTotal)) break
       }
-    } catch {
-    }
+    } catch {}
     if (details.episodes.length === 0) {
       const epRe =
         /\\"id\\":(\d+),\\"isFiller\\":(true|false),\\"episodeNumber\\":(\d+),\\"title\\":\\"((?:[^"\\]|\\.)*)\\"/g
@@ -332,7 +324,7 @@ export default function createProvider(ctx) {
 
   async function getEpisodeSourcesInternal(episodeId) {
     const trpcUrl = `https://animeya.cc/api/trpc/episode.getEpisodeFullById?batch=1&input=${encodeURIComponent(
-      JSON.stringify({ '0': { json: parseInt(episodeId, 10) } })
+      JSON.stringify({ 0: { json: parseInt(episodeId, 10) } })
     )}`
     const res = await fetchRetry(trpcUrl)
     const json = await res.json()

@@ -34,7 +34,9 @@ function decodeConfig(html) {
     for (let i = 0; i < bytes.length; i++) {
       plain += String.fromCharCode(bytes[i] ^ ((seed + key[i % key.length] + i) & 255))
     }
-    const cfg = (decodeURIComponent(escape(plain)).match(/__EM_PLAYER__\s*=\s*(\{[\s\S]*\})\s*;?\s*$/) || [])[1]
+    const cfg = (decodeURIComponent(escape(plain)).match(
+      /__EM_PLAYER__\s*=\s*(\{[\s\S]*\})\s*;?\s*$/
+    ) || [])[1]
     if (cfg) return JSON.parse(cfg)
   }
   throw new Error('no __EM_PLAYER__ config found')
@@ -45,11 +47,18 @@ async function getConfig(media) {
     media.type === 'movie'
       ? `/movie/${media.tmdbId}`
       : `/tv/${media.tmdbId}/${media.season || 1}/${media.episode || 1}`
-  const link = await fetch(LINK + path, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(TIMEOUT) })
+  const link = await fetch(LINK + path, {
+    headers: { 'User-Agent': UA },
+    signal: AbortSignal.timeout(TIMEOUT),
+  })
   if (!link.ok) throw new Error(`embed lookup HTTP ${link.status}`)
   const page = await fetch(link.url, {
     method: 'POST',
-    headers: { 'User-Agent': UA, Referer: link.url, 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'User-Agent': UA,
+      Referer: link.url,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     body: 'tr=1',
     redirect: 'manual',
     signal: AbortSignal.timeout(TIMEOUT),
@@ -168,7 +177,11 @@ async function resolve(ctx, cfg, row) {
     type: data.type === 'progressive' ? 'mp4' : 'hls',
     qualities: Array.isArray(data.qualities) ? data.qualities : [],
     subtitles: Array.isArray(data.subtitles)
-      ? data.subtitles.map((t) => ({ language: t.lang || 'und', label: t.label || t.lang || 'Sub', url: t.url }))
+      ? data.subtitles.map((t) => ({
+          language: t.lang || 'und',
+          label: t.label || t.lang || 'Sub',
+          url: t.url,
+        }))
       : [],
   }
 }
@@ -189,7 +202,9 @@ async function playlistVariants(url) {
     const uri = lines[i + 1]?.trim()
     if (!uri || uri.startsWith('#')) continue
     out.push({
-      label: attrs.match(/RESOLUTION=\d+x(\d+)/)?.[1] ? `${attrs.match(/RESOLUTION=\d+x(\d+)/)[1]}p` : 'auto',
+      label: attrs.match(/RESOLUTION=\d+x(\d+)/)?.[1]
+        ? `${attrs.match(/RESOLUTION=\d+x(\d+)/)[1]}p`
+        : 'auto',
       url: new URL(uri, res.url || url).href,
       height: Number(attrs.match(/RESOLUTION=\d+x(\d+)/)?.[1] || 0),
     })

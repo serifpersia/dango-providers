@@ -195,10 +195,6 @@ function parseTags(html) {
 }
 
 function parseChapters(html) {
-  const table =
-    html.match(/id="plyr-chapter-playlist"[\s\S]*?<\/table>/)?.[0] ??
-    html.match(/id="basic-chapter-playlist"[\s\S]*?<\/table>/)?.[0] ??
-    ''
   const chapters = []
   const seen = new Set()
   const re =
@@ -346,7 +342,7 @@ export default function createProvider(ctx) {
     return html
   }
 
-  async function getEpisodes(showId, mode) {
+  async function getEpisodes(showId, _mode) {
     try {
       const rjCode = showId.trim().toUpperCase()
       if (!/^RJ\d{5,}$/.test(rjCode)) return null
@@ -429,7 +425,7 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function getStreamUrls(showId, episodeNumber, mode) {
+  async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       const rjCode = showId.trim().toUpperCase()
       if (!/^RJ\d{5,}$/.test(rjCode)) {
@@ -467,10 +463,7 @@ export default function createProvider(ctx) {
         ).map((m) => m[1])
         const uniqueMp3s = Array.from(new Set(mp3Matches))
         if (uniqueMp3s.length === 0) {
-          log.warn(
-            { rjCode, postId: meta.postId },
-            '[JAsmr] No audio sources found on post page'
-          )
+          log.warn({ rjCode, postId: meta.postId }, '[JAsmr] No audio sources found on post page')
           return null
         }
         uniqueMp3s.forEach((mp3Url, i) => {

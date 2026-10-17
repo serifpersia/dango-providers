@@ -214,8 +214,7 @@ export default function createProvider(ctx) {
       params.set('pagination[page]', String(page))
       params.set('pagination[pageSize]', String(pageSize))
       if (sort) params.set('sort', sort)
-      const fetchBrowse = () =>
-        fetchApi(`/series?${params.toString()}`)
+      const fetchBrowse = () => fetchApi(`/series?${params.toString()}`)
       let res = await fetchBrowse()
       if (!res?.data && sort) {
         params.delete('sort')
@@ -299,7 +298,7 @@ export default function createProvider(ctx) {
     })
   }
 
-  async function getEpisodes(showId, mode) {
+  async function getEpisodes(showId, _mode) {
     try {
       if (!showId) return null
       const html = await fetchText(`${BASE_URL}/h/${showId}`)
@@ -317,7 +316,7 @@ export default function createProvider(ctx) {
     }
   }
 
-  async function getStreamUrls(showId, episodeNumber, mode) {
+  async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       const episodeUrl = `${BASE_URL}/h/${showId}/${episodeNumber}`
       const html = await fetchText(episodeUrl)
@@ -360,8 +359,7 @@ export default function createProvider(ctx) {
               })
             }
           }
-        } catch {
-        }
+        } catch {}
       }
       return result
     } catch (error) {

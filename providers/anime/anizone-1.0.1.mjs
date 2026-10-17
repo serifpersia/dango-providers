@@ -32,7 +32,9 @@ export default function createProvider(ctx) {
     if (!raw) return null
     const marker = '\x01U\x01'
     let value = String(raw).replace(/\\\\u([0-9a-fA-F]{4})/g, `${marker}$1`)
-    value = value.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    value = value.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    )
     value = value.replace(/\x01U\x01([0-9a-fA-F]{4})/g, '\\u$1')
     try {
       return JSON.parse(value)
@@ -74,12 +76,17 @@ export default function createProvider(ctx) {
   }
 
   function jsonArgument(html, name) {
-    const pattern = new RegExp(`${escapeRegex(name)}\\s*:\\s*JSON\\.parse\\('((?:[^'\\\\]|\\\\.)*)'\\)`, 'i')
+    const pattern = new RegExp(
+      `${escapeRegex(name)}\\s*:\\s*JSON\\.parse\\('((?:[^'\\\\]|\\\\.)*)'\\)`,
+      'i'
+    )
     return decodeJsonArgument(String(html).match(pattern)?.[1])
   }
 
   function playerData(html) {
-    const match = String(html).match(/vidstackPlayer\s*\(\s*JSON\.parse\('((?:[^'\\]|\\.)*)'\)\s*\)/i)
+    const match = String(html).match(
+      /vidstackPlayer\s*\(\s*JSON\.parse\('((?:[^'\\]|\\.)*)'\)\s*\)/i
+    )
     return decodeJsonArgument(match?.[1])
   }
 
@@ -149,9 +156,12 @@ export default function createProvider(ctx) {
   function buildTitles(media) {
     return [
       ...new Set(
-        [media?.title?.english, media?.title?.romaji, media?.title?.native, ...(media?.synonyms ?? [])].filter(
-          Boolean
-        )
+        [
+          media?.title?.english,
+          media?.title?.romaji,
+          media?.title?.native,
+          ...(media?.synonyms ?? []),
+        ].filter(Boolean)
       ),
     ]
   }
@@ -161,7 +171,9 @@ export default function createProvider(ctx) {
   }
 
   function titleValues(item) {
-    return [...new Set([item?.main_title, ...Object.values(item?.title_list || {})].filter(Boolean))]
+    return [
+      ...new Set([item?.main_title, ...Object.values(item?.title_list || {})].filter(Boolean)),
+    ]
   }
 
   function formatName(value) {
@@ -187,10 +199,15 @@ export default function createProvider(ctx) {
   function searchQueries(titles) {
     const queries = new Set()
     for (const raw of titles.slice(0, 8)) {
-      const title = String(raw || '').replace(/\s+/g, ' ').trim()
+      const title = String(raw || '')
+        .replace(/\s+/g, ' ')
+        .trim()
       if (!title) continue
       queries.add(title)
-      const plain = title.replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/\s+/g, ' ').trim()
+      const plain = title
+        .replace(/[^\p{L}\p{N}]+/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
       if (plain.length >= 3) queries.add(plain)
       const words = plain.split(/\s+/).filter(Boolean)
       if (words.length > 4) queries.add(words.slice(0, 4).join(' '))
@@ -288,10 +305,19 @@ export default function createProvider(ctx) {
       .sort((left, right) => right.score - left.score)
     const selected = valid[0]
     const runnerUp = valid[1]
-    if (!selected || selected.score < 0.82 || (runnerUp && selected.score - runnerUp.score < 0.08)) {
+    if (
+      !selected ||
+      selected.score < 0.82 ||
+      (runnerUp && selected.score - runnerUp.score < 0.08)
+    ) {
       throw new Error(`AniZone match not confident for AniList ${anilistId}`)
     }
-    const data = { slug: selected.slug, title: selected.title, matchScore: selected.titleScore, score: selected.score }
+    const data = {
+      slug: selected.slug,
+      title: selected.title,
+      matchScore: selected.titleScore,
+      score: selected.score,
+    }
     cache.set(cacheKey, data, IDENTITY_TTL_SECONDS)
     return data
   }
@@ -433,7 +459,8 @@ export default function createProvider(ctx) {
   function subtitleRank(subtitle) {
     const label = String(subtitle.label || '').toLowerCase()
     const lang = String(subtitle.language || '').toLowerCase()
-    const isEn = lang === 'en' || lang.startsWith('en-') || lang.startsWith('en_') || label.includes('english')
+    const isEn =
+      lang === 'en' || lang.startsWith('en-') || lang.startsWith('en_') || label.includes('english')
     if (!isEn) return 5
     if (/signs?\s*&\s*songs|signs|songs/.test(label)) return 4
     if (/forced/.test(label)) return 3
@@ -518,15 +545,17 @@ export default function createProvider(ctx) {
       if (!targets.length) return null
       const discovered = new Map()
       await Promise.all(
-        targets.flatMap((t) => searchQueries([t])).map(async (q) => {
-          try {
-            for (const item of await searchSite(q)) {
-              if (!discovered.has(item.slug)) discovered.set(item.slug, item)
+        targets
+          .flatMap((t) => searchQueries([t]))
+          .map(async (q) => {
+            try {
+              for (const item of await searchSite(q)) {
+                if (!discovered.has(item.slug)) discovered.set(item.slug, item)
+              }
+            } catch {
+              // ignore
             }
-          } catch {
-            // ignore
-          }
-        })
+          })
       )
       const items = [...discovered.values()]
       if (!items.length) return null

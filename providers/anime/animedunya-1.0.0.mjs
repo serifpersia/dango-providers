@@ -92,8 +92,7 @@ export default function createProvider(ctx) {
         cache.set(cacheKey, result, 86400)
         return result
       }
-    } catch {
-    }
+    } catch {}
     try {
       const fb = await ctx.kitsu.metaByAnilistId(Number(anilistId))
       if (fb?.idMal) {
@@ -101,8 +100,7 @@ export default function createProvider(ctx) {
         cache.set(cacheKey, result, 86400)
         return result
       }
-    } catch {
-    }
+    } catch {}
     cache.set(cacheKey, '', 3600)
     return null
   }
@@ -196,8 +194,7 @@ export default function createProvider(ctx) {
         const label = item.label || item.srclang || 'Unknown'
         tracks.push({ language: label, label, url: item.src })
       }
-    } catch {
-    }
+    } catch {}
     return tracks
   }
 

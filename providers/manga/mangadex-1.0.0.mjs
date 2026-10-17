@@ -112,7 +112,9 @@ export default function createProvider(ctx) {
     const cached = cache.get(cacheKey)
     if (cached) return cached
     try {
-      const data = await getJson(`${API}/manga/${id}?includes[]=cover_art&includes[]=author&includes[]=artist`)
+      const data = await getJson(
+        `${API}/manga/${id}?includes[]=cover_art&includes[]=author&includes[]=artist`
+      )
       const m = data.data
       if (!m) return null
       const card = toCard(m)
@@ -157,7 +159,8 @@ export default function createProvider(ctx) {
           p.set('offset', String(page * 100))
           const data = await getJson(`${API}/manga/${id}/feed?${p.toString()}`)
           for (const c of data.data || []) {
-            const group = c.relationships?.find((r) => r.type === 'scanlation_group')?.attributes?.name
+            const group = c.relationships?.find((r) => r.type === 'scanlation_group')?.attributes
+              ?.name
             out.push({
               id: c.id,
               provider: 'mangadex',
@@ -195,7 +198,9 @@ export default function createProvider(ctx) {
     if (cached) return cached
     try {
       const data = await getJson(`${API}/at-home/server/${chapterId}`)
-      const pages = (data.chapter?.data || []).map((f) => `${data.baseUrl}/data/${data.chapter.hash}/${f}`)
+      const pages = (data.chapter?.data || []).map(
+        (f) => `${data.baseUrl}/data/${data.chapter.hash}/${f}`
+      )
       cache.set(cacheKey, pages, 300)
       return pages
     } catch (err) {
