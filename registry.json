@@ -1,6 +1,6 @@
 {
-  "version": 34,
-  "updatedAt": "2026-10-17T08:18:46Z",
+  "version": 35,
+  "updatedAt": "2026-10-17T08:35:00Z",
   "providers": [
     {
       "id": "megaplay",
@@ -100,21 +100,6 @@
       "sha256": "64683f90e365c78f2384089a3d1fcd0b0e87be1cb98e49ccedefdea9d01fe764",
       "mature": false,
       "sub": "hard",
-      "tier": "embed",
-      "modes": [
-        "sub",
-        "dub"
-      ],
-      "enabledByDefault": true
-    },
-    {
-      "id": "animedunya",
-      "label": "AnimeDunya",
-      "version": "1.0.0",
-      "entry": "providers/anime/animedunya-1.0.0.mjs",
-      "sha256": "7c1ab054ab18de302e741d66cf19598a11d2c2ab12f1f3decadb0177b34c597b",
-      "mature": false,
-      "sub": "soft",
       "tier": "embed",
       "modes": [
         "sub",
