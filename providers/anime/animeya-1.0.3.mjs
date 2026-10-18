@@ -400,7 +400,10 @@ export default function createProvider(ctx) {
       const sourcesData = await getEpisodeSourcesInternal(String(episode.id))
       const processedSources = []
 
-      for (const source of sourcesData.sources) {
+      const orderedSources = [...sourcesData.sources].sort(
+        (a, b) => Number(b.name === 'Mp4') - Number(a.name === 'Mp4')
+      )
+      for (const source of orderedSources) {
         const subType = (source.subType || '').toUpperCase()
         const langue = (source.langue || '').toUpperCase()
 

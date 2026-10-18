@@ -1,6 +1,6 @@
 {
-  "version": 35,
-  "updatedAt": "2026-10-17T08:35:00Z",
+  "version": 38,
+  "updatedAt": "2026-10-18T22:26:26Z",
   "providers": [
     {
       "id": "megaplay",
@@ -80,9 +80,9 @@
     {
       "id": "animeya",
       "label": "Animeya",
-      "version": "1.0.1",
-      "entry": "providers/anime/animeya-1.0.1.mjs",
-      "sha256": "50c110cd61457f524c3e17652b47e4b60b25454cfb37732b6da671114d443eb5",
+      "version": "1.0.3",
+      "entry": "providers/anime/animeya-1.0.3.mjs",
+      "sha256": "4fdeb1abce24153fb0f18aafa384e8b9dbf7366003afd852a400c8408585d22d",
       "mature": false,
       "sub": "mixed",
       "tier": "embed",
@@ -354,6 +354,22 @@
       "mature": false,
       "kind": "tv",
       "tier": "embed",
+      "enabledByDefault": true
+    },
+    {
+      "id": "mkissa",
+      "label": "MKissa",
+      "version": "1.0.0",
+      "entry": "providers/anime/mkissa-1.0.0.mjs",
+      "sha256": "7391d43cbd7bfd7126e301977f0a0fac0d8c89e0e2d23013923a72f3dd79ef4a",
+      "mature": false,
+      "kind": "anime",
+      "sub": "hard",
+      "tier": "direct",
+      "modes": [
+        "sub",
+        "dub"
+      ],
       "enabledByDefault": true
     }
   ]
