@@ -403,6 +403,43 @@ export default function createProvider(ctx) {
     }
   }
 
+  async function expandHls(link) {
+    if (!link.hls || link.resolutionStr !== 'Auto') return [link]
+    try {
+      const res = await fetch(link.link, {
+        headers: {
+          'User-Agent': UA,
+          Accept: '*/*',
+          Referer: link.headers?.Referer || BASE_URL + '/',
+        },
+        signal: AbortSignal.timeout(15000),
+      })
+      if (!res.ok) return [link]
+      const body = await res.text()
+      const variants = []
+      const re = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
+      let m
+      while ((m = re.exec(body)) !== null) {
+        const q = m[1].match(/RESOLUTION=\d+x(\d+)/)?.[1] || m[1].match(/NAME="([^"]+)"/)?.[1]
+        if (!q) continue
+        variants.push({
+          resolutionStr: `${q}p`,
+          link: new URL(m[2], link.link).href,
+          hls: true,
+          headers: link.headers,
+        })
+      }
+      if (variants.length === 0) return [link]
+      variants.sort(
+        (a, b) =>
+          (b.resolutionStr.match(/\d+/) || [0])[0] - (a.resolutionStr.match(/\d+/) || [0])[0]
+      )
+      return [...variants, link]
+    } catch {
+      return [link]
+    }
+  }
+
   async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       let targetEpisode = episodeNumber
@@ -505,10 +542,11 @@ export default function createProvider(ctx) {
       if (links.length === 0) {
         return null
       }
+      const expanded = (await Promise.all(links.map(expandHls))).flat()
       const result = [
         {
           sourceName: 'WH (Direct)',
-          links,
+          links: expanded,
           type: 'player',
           actualEpisodeNumber: targetEpisode,
         },

@@ -1,6 +1,6 @@
 {
-  "version": 43,
-  "updatedAt": "2026-10-19T18:59:00Z",
+  "version": 44,
+  "updatedAt": "2026-10-19T19:09:08Z",
   "providers": [
     {
       "id": "megaplay",
@@ -125,9 +125,9 @@
     {
       "id": "wh",
       "label": "WH",
-      "version": "1.0.0",
-      "entry": "providers/anime/wh-1.0.0.mjs",
-      "sha256": "c7935d90436a6ca13abbecb7d3e3b59fabd6393fd00b1d0459a19b8515b184a4",
+      "version": "1.0.1",
+      "entry": "providers/anime/wh-1.0.1.mjs",
+      "sha256": "aa0fd5e003beaa631d3f76d7f68c81cc0f5268c961201d2b0c76bffcc884c36f",
       "mature": true,
       "tier": "direct",
       "modes": [
@@ -141,9 +141,9 @@
     {
       "id": "hn",
       "label": "HN",
-      "version": "1.0.1",
-      "entry": "providers/anime/hn-1.0.1.mjs",
-      "sha256": "b134c4b33f9569c5b7798c5d7b0c3035691eb01b15aeeabe74c1995b14cc6069",
+      "version": "1.0.2",
+      "entry": "providers/anime/hn-1.0.2.mjs",
+      "sha256": "9ff8a62e00c46b7b8da053e9b60d08faaff33e907c21f9147abcb53977aa936d",
       "mature": true,
       "tier": "direct",
       "modes": [
