@@ -404,6 +404,26 @@ export default function createProvider(ctx) {
     return null
   }
 
+  async function extractDirectFromEmbed(embedUrl) {
+    try {
+      const res = await fetch(embedUrl, {
+        headers: { 'User-Agent': UA, Referer: BASE_URL + '/', Accept: 'text/html' },
+        signal: AbortSignal.timeout(15000),
+      })
+      if (!res.ok) return null
+      const html = await res.text()
+      const serverMatch = html.match(/data-id="\/player\.php\?vid=([^"&]+)/)
+      if (!serverMatch) return null
+      const b64 = serverMatch[1]
+      const decoded = Buffer.from(b64, 'base64').toString()
+      const directUrl = decoded.split('|')[0]
+      if (!directUrl.startsWith('http')) return null
+      return directUrl
+    } catch {
+      return null
+    }
+  }
+
   async function getStreamUrls(showId, episodeNumber, _mode) {
     try {
       let targetEpisode = episodeNumber
@@ -419,14 +439,22 @@ export default function createProvider(ctx) {
       const cached = cache.get(cacheKey)
       if (cached) return cached
 
-      const result = [
-        {
-          sourceName: 'HT',
-          links: [{ resolutionStr: 'Auto', link: embedUrl, hls: false }],
-          type: 'iframe',
+      const directUrl = await extractDirectFromEmbed(embedUrl)
+      const result = []
+      if (directUrl) {
+        result.push({
+          sourceName: 'HT (Direct)',
+          links: [{ resolutionStr: 'Auto', link: directUrl, hls: false }],
+          type: 'player',
           actualEpisodeNumber: targetEpisode,
-        },
-      ]
+        })
+      }
+      result.push({
+        sourceName: 'HT (Iframe)',
+        links: [{ resolutionStr: 'Auto', link: embedUrl, hls: false }],
+        type: 'iframe',
+        actualEpisodeNumber: targetEpisode,
+      })
 
       cache.set(cacheKey, result, 3600)
       return result
