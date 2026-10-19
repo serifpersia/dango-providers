@@ -1,6 +1,6 @@
 {
-  "version": 39,
-  "updatedAt": "2026-10-19T17:57:41Z",
+  "version": 41,
+  "updatedAt": "2026-10-19T18:49:24Z",
   "providers": [
     {
       "id": "megaplay",
@@ -10,6 +10,21 @@
       "sha256": "f28af525bc5f22adafb486937a82f5dfd584c4bd9572e58ee7695225f7ef6b0b",
       "mature": false,
       "sub": "soft",
+      "tier": "direct",
+      "modes": [
+        "sub",
+        "dub"
+      ],
+      "enabledByDefault": true
+    },
+    {
+      "id": "anipm",
+      "label": "AniPM",
+      "version": "1.0.1",
+      "entry": "providers/anime/anipm-1.0.1.mjs",
+      "sha256": "ef9071b9479ed3c9711742348daa453d310a507edc54978ae7888c14dee7d389",
+      "mature": false,
+      "sub": "mixed",
       "tier": "direct",
       "modes": [
         "sub",
