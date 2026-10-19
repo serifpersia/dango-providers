@@ -1,6 +1,6 @@
 {
-  "version": 45,
-  "updatedAt": "2026-10-19T19:13:43Z",
+  "version": 46,
+  "updatedAt": "2026-10-19T19:09:08Z",
   "providers": [
     {
       "id": "megaplay",
@@ -158,9 +158,9 @@
     {
       "id": "ht",
       "label": "HT",
-      "version": "1.0.2",
-      "entry": "providers/anime/ht-1.0.2.mjs",
-      "sha256": "a66078a4ec4d41f2c445fa3e94fd478715e5d97a453a688811d2e74945d3eff9",
+      "version": "1.0.3",
+      "entry": "providers/anime/ht-1.0.3.mjs",
+      "sha256": "8bf3c34b66c28e5f2b27670f954e424cb63b1985bc2149c240ebe5460612930a",
       "mature": true,
       "tier": "direct",
       "modes": [
