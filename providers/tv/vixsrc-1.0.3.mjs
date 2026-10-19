@@ -8,7 +8,9 @@ const HEADERS = {
   Origin: BASE_URL,
 }
 
-export default function createProvider() {
+export default function createProvider(ctx) {
+  const scraping = ctx?.scraping?.fetch ?? fetch
+
   async function getSources(media) {
     const numericTmdbId = Number(media.tmdbId)
     if (!numericTmdbId) return null
@@ -38,12 +40,13 @@ export default function createProvider() {
       if (!token || !expires || !playlist) return null
       const sep = playlist.includes('?') ? '&' : '?'
       const masterUrl = `${playlist}${sep}token=${token}&expires=${expires}&h=1`
-      const plRes = await fetch(masterUrl, {
-        headers: { ...HEADERS, Referer: pageUrl },
-        signal: AbortSignal.timeout(10000),
+      const plRes = await scraping({
+        url: masterUrl,
+        headers: { ...HEADERS, Referer: pageUrl, Accept: '*/*' },
+        timeout: { request: 10000 },
       })
-      if (!plRes.ok) throw new Error(`VixSrc playlist HTTP ${plRes.status}`)
-      const playlistContent = await plRes.text()
+      if (plRes.statusCode !== 200) throw new Error(`VixSrc playlist HTTP ${plRes.statusCode}`)
+      const playlistContent = plRes.body
       const regex = /#EXT-X-STREAM-INF:[^\n]*RESOLUTION=\d+x(\d+)[^\n]*\n([^\n]+)/g
       let match
       let bestResolution = 0
