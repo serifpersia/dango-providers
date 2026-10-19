@@ -1,6 +1,6 @@
 {
-  "version": 38,
-  "updatedAt": "2026-10-18T22:26:26Z",
+  "version": 39,
+  "updatedAt": "2026-10-19T17:57:41Z",
   "providers": [
     {
       "id": "megaplay",
@@ -220,9 +220,9 @@
     {
       "id": "vixsrc",
       "label": "VixSrc (HLS)",
-      "version": "1.0.1",
-      "entry": "providers/tv/vixsrc-1.0.1.mjs",
-      "sha256": "7bdbcb6de9c359946dfc6369e4fd40de102baf7b16691da52c5ad23befcd6c5e",
+      "version": "1.0.2",
+      "entry": "providers/tv/vixsrc-1.0.2.mjs",
+      "sha256": "f90efba72d74a3a80a9a79f9044a6139aa6db6b92defe88ea560aa35e62a3eb1",
       "mature": false,
       "kind": "tv",
       "tier": "direct",

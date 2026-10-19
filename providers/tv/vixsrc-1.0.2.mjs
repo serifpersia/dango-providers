@@ -1,4 +1,5 @@
 const BASE_URL = 'https://vixsrc.to'
+const LIVE_CDN = 'vix-content.net'
 const HEADERS = {
   'User-Agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150 Safari/537.36',
@@ -73,5 +74,17 @@ export default function createProvider() {
     }
   }
 
-  return { name: 'vixsrc', getSources }
+  function rewritePlaylist(body) {
+    return body
+      .split('\n')
+      .map((line) => {
+        if (!line || line.startsWith('#')) return line
+        return line
+          .replace(/^(https:\/\/)(sc-[a-z0-9-]+)\.[^/]+/, `$1$2.${LIVE_CDN}`)
+          .replace(/\.(html|m4s)(\?|$)/, '.ts$1')
+      })
+      .join('\n')
+  }
+
+  return { name: 'vixsrc', getSources, rewritePlaylist }
 }
