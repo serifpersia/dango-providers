@@ -1,5 +1,5 @@
 {
-  "version": 46,
+  "version": 47,
   "updatedAt": "2026-10-19T19:35:46Z",
   "providers": [
     {
@@ -227,17 +227,6 @@
       "version": "1.0.3",
       "entry": "providers/tv/movybz-1.0.3.mjs",
       "sha256": "137220f8105caa0fb8c1325672890da9b1f506d48502ea0a097c67c4609f6cb5",
-      "mature": false,
-      "kind": "tv",
-      "tier": "direct",
-      "enabledByDefault": true
-    },
-    {
-      "id": "vixsrc",
-      "label": "VixSrc (HLS)",
-      "version": "1.0.3",
-      "entry": "providers/tv/vixsrc-1.0.3.mjs",
-      "sha256": "dd6d1d5ac727ded46ade0f16725c8947155aeb3d391f547dbbc90e8dc4cae39d",
       "mature": false,
       "kind": "tv",
       "tier": "direct",
