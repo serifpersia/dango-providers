@@ -1,6 +1,6 @@
 {
-  "version": 41,
-  "updatedAt": "2026-10-19T18:49:24Z",
+  "version": 43,
+  "updatedAt": "2026-10-19T18:59:00Z",
   "providers": [
     {
       "id": "megaplay",
@@ -20,9 +20,9 @@
     {
       "id": "anipm",
       "label": "AniPM",
-      "version": "1.0.1",
-      "entry": "providers/anime/anipm-1.0.1.mjs",
-      "sha256": "ef9071b9479ed3c9711742348daa453d310a507edc54978ae7888c14dee7d389",
+      "version": "1.0.2",
+      "entry": "providers/anime/anipm-1.0.2.mjs",
+      "sha256": "9438e3116582089b43897ed90cd0a29c11bd4dd10923e66c49f6d2b9fe76066c",
       "mature": false,
       "sub": "mixed",
       "tier": "direct",
@@ -35,9 +35,9 @@
     {
       "id": "justanime",
       "label": "JustAnime",
-      "version": "1.0.0",
-      "entry": "providers/anime/justanime-1.0.0.mjs",
-      "sha256": "8aa69d934741d3a64d61265727e12ea4288fdc4ffd70d47b7dd774adcb285f57",
+      "version": "1.0.1",
+      "entry": "providers/anime/justanime-1.0.1.mjs",
+      "sha256": "61df362af85d67b129097f3c40b0df091312ead5a6c95f86afbf2b644801c5f0",
       "mature": false,
       "sub": "mixed",
       "tier": "direct",

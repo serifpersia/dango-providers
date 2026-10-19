@@ -126,6 +126,42 @@ export default function createProvider(ctx) {
     }
   }
 
+  async function expandHls(link) {
+    if (!link.hls || link.resolutionStr !== 'Auto') return [link]
+    try {
+      const res = await fetch(link.link, {
+        headers: {
+          'User-Agent': UA,
+          Accept: '*/*',
+          Referer: link.headers?.Referer || `${SITE_BASE}/`,
+        },
+        signal: AbortSignal.timeout(15000),
+      })
+      if (!res.ok) return [link]
+      const body = await res.text()
+      const variants = []
+      const re = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
+      let m
+      while ((m = re.exec(body)) !== null) {
+        const q = qualityNum(
+          m[1].match(/RESOLUTION=\d+x(\d+)/)?.[1] || m[1].match(/NAME="([^"]+)"/)?.[1]
+        )
+        if (!q) continue
+        variants.push({
+          resolutionStr: `${q}p`,
+          link: new URL(m[2], link.link).href,
+          hls: true,
+          headers: link.headers,
+        })
+      }
+      if (variants.length === 0) return [link]
+      variants.sort((a, b) => qualityNum(b.resolutionStr) - qualityNum(a.resolutionStr))
+      return [...variants, link]
+    } catch {
+      return [link]
+    }
+  }
+
   async function getStreamUrls(showId, episodeNumber, mode = 'sub') {
     try {
       const id = showId.trim()
@@ -169,7 +205,8 @@ export default function createProvider(ctx) {
             hls,
             headers: { Referer: referer },
           }))
-        if (links.length === 0) continue
+        const expanded = (await Promise.all(links.map(expandHls))).flat()
+        if (expanded.length === 0) continue
         const subtitles = [...(track?.subtitles || []), ...(track?.tracks || [])]
           .filter((s) => s && s.file)
           .map((s) => ({
@@ -183,7 +220,7 @@ export default function createProvider(ctx) {
         )
         result.push({
           sourceName: `JustAnime · ${server} (${mode.toUpperCase()})`,
-          links,
+          links: expanded,
           subtitles: uniqueSubtitles.length > 0 ? uniqueSubtitles : undefined,
           type: 'player',
           actualEpisodeNumber: ep,

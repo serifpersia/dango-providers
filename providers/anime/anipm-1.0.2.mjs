@@ -117,6 +117,34 @@ export default function createProvider(ctx) {
     }
   }
 
+  async function fetchVariants(source) {
+    try {
+      const res = await ctx.scraping.fetch({
+        url: source,
+        headers: { Accept: '*/*', Referer: EMBED_ORIGIN },
+        timeout: { request: 20000 },
+      })
+      if (res.statusCode !== 200) return []
+      const variants = []
+      const re = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
+      let m
+      while ((m = re.exec(res.body)) !== null) {
+        const label =
+          m[1].match(/NAME="([^"]+)"/)?.[1] || (m[1].match(/RESOLUTION=\d+x(\d+)/)?.[1] ?? '') + 'p'
+        if (!label || label === 'p') continue
+        variants.push({
+          resolutionStr: label,
+          link: ctx.proxyUrl(new URL(m[2], source).href, EMBED_ORIGIN),
+          hls: true,
+          headers: { Referer: EMBED_ORIGIN },
+        })
+      }
+      return variants
+    } catch {
+      return []
+    }
+  }
+
   async function getStreamUrls(showId, episodeNumber, mode = 'sub') {
     const targetEpisode = episodeNumber === '0' ? '1' : episodeNumber
     const cacheKey = `anipm_stream_${showId}_${targetEpisode}_${mode}`
@@ -150,6 +178,7 @@ export default function createProvider(ctx) {
         return {
           sourceName: `AniPM (${label})`,
           links: [
+            ...(await fetchVariants(stream.source)),
             {
               resolutionStr: 'Auto',
               link: ctx.proxyUrl(stream.source, EMBED_ORIGIN),
