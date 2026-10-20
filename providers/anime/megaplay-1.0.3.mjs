@@ -475,7 +475,7 @@ export default function createProvider(ctx) {
         } catch {}
         links.push({
           resolutionStr: 'Auto',
-          link: s.file,
+          link: signNexabloomMasterUrl(s.file, 3600),
           hls: true,
           headers: {
             Referer: 'https://megaplay.buzz/',

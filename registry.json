@@ -1,13 +1,13 @@
 {
-  "version": 47,
-  "updatedAt": "2026-10-19T19:35:46Z",
+  "version": 51,
+  "updatedAt": "2026-10-20T13:00:00Z",
   "providers": [
     {
       "id": "megaplay",
       "label": "MegaPlay",
-      "version": "1.0.2",
-      "entry": "providers/anime/megaplay-1.0.2.mjs",
-      "sha256": "f28af525bc5f22adafb486937a82f5dfd584c4bd9572e58ee7695225f7ef6b0b",
+      "version": "1.0.3",
+      "entry": "providers/anime/megaplay-1.0.3.mjs",
+      "sha256": "5fdb04adf7b9f9b72ac742628f36b44c64018b86fe8400690e08d40683c6203a",
       "mature": false,
       "sub": "soft",
       "tier": "direct",
@@ -15,6 +15,19 @@
         "sub",
         "dub"
       ],
+      "proxy": {
+        "suffixes": [
+          ".quavex.top",
+          ".nexabloom.top",
+          ".hiddenvertex.top",
+          ".ironhorizon.top",
+          ".solarhaven.top"
+        ],
+        "mirrors": [
+          "fetch.nexabloom.top"
+        ],
+        "origin": "https://megaplay.buzz"
+      },
       "enabledByDefault": true
     },
     {
@@ -24,6 +37,12 @@
       "entry": "providers/anime/anipm-1.0.2.mjs",
       "sha256": "9438e3116582089b43897ed90cd0a29c11bd4dd10923e66c49f6d2b9fe76066c",
       "mature": false,
+      "proxy": {
+        "suffixes": [
+          ".settlar.io"
+        ],
+        "scrape": true
+      },
       "sub": "mixed",
       "tier": "direct",
       "modes": [
@@ -69,6 +88,19 @@
       "entry": "providers/anime/kaa-1.0.0.mjs",
       "sha256": "08c997309251ca48bbeb2a4fc34c6bada87630433a1878559d3411ebc68c0f5e",
       "mature": false,
+      "proxy": {
+        "hosts": [
+          "hls.krussdomi.com",
+          "subst.krussdomi.com",
+          "krussdomi.com",
+          "st1.advancedairesearchlab.xyz",
+          "st1.habibikun.xyz",
+          "st1.babybayw.xyz",
+          "st1.narutokun.xyz"
+        ],
+        "referer": "https://krussdomi.com/",
+        "origin": "https://krussdomi.com"
+      },
       "sub": "soft",
       "tier": "direct",
       "modes": [
@@ -84,6 +116,27 @@
       "entry": "providers/anime/animepahe-1.0.2.mjs",
       "sha256": "b1378f3338c1aa00cf2fa22cc903d94d2b279ec736e6fae7fe6594f0a0595c08",
       "mature": false,
+      "proxy": {
+        "hosts": [
+          "animepahe.pw",
+          "animepahe.ru",
+          "kwik.cx",
+          "kwik.si",
+          "kwik.pro"
+        ],
+        "suffixes": [
+          ".uwucdn.top",
+          ".owocdn.top",
+          ".animepahe.pw",
+          ".animepahe.ru"
+        ],
+        "referer": "https://animepahe.pw/",
+        "origin": "https://animepahe.pw",
+        "originFromReferer": true,
+        "scrape": true,
+        "cfCookie": true,
+        "embedPatch": true
+      },
       "sub": "hard",
       "tier": "cookie",
       "modes": [
@@ -99,6 +152,12 @@
       "entry": "providers/anime/animeya-1.0.3.mjs",
       "sha256": "4fdeb1abce24153fb0f18aafa384e8b9dbf7366003afd852a400c8408585d22d",
       "mature": false,
+      "proxy": {
+        "suffixes": [
+          ".animeya.cc"
+        ],
+        "referer": "https://animeya.cc/"
+      },
       "sub": "mixed",
       "tier": "embed",
       "modes": [
@@ -145,6 +204,15 @@
       "entry": "providers/anime/hn-1.0.2.mjs",
       "sha256": "9ff8a62e00c46b7b8da053e9b60d08faaff33e907c21f9147abcb53977aa936d",
       "mature": true,
+      "proxy": {
+        "hosts": [
+          "r2.1hanime.com",
+          "1.1hanime.com"
+        ],
+        "referer": "https://nhplayer.com/",
+        "origin": "https://nhplayer.com",
+        "scrape": true
+      },
       "tier": "direct",
       "modes": [
         "sub"
@@ -178,6 +246,14 @@
       "entry": "providers/anime/op-1.0.0.mjs",
       "sha256": "8c80f459b337c72c6ee0869cd35f7964cdf78a528c831bfd443b27062a34eadf",
       "mature": true,
+      "proxy": {
+        "hosts": [
+          "myspacecat.pictures",
+          "oppai.stream"
+        ],
+        "referer": "https://oppai.stream/",
+        "origin": "https://oppai.stream"
+      },
       "tier": "direct",
       "modes": [
         "sub"
@@ -197,6 +273,16 @@
       "entry": "providers/asmr/jasmr-1.0.0.mjs",
       "sha256": "294d2ee3bbd942d2463599066da9e1f35f02fd8ea7e53421ec81d9c33fafaacd",
       "mature": false,
+      "proxy": {
+        "suffixes": [
+          ".weeabo0.xyz",
+          ".weeab0o.xyz",
+          ".japaneseasmr.com"
+        ],
+        "referer": "https://japaneseasmr.com/",
+        "scrape": true,
+        "cfCookie": true
+      },
       "kind": "asmr",
       "tier": "direct",
       "enabledByDefault": true
@@ -227,6 +313,17 @@
       "version": "1.0.3",
       "entry": "providers/tv/movybz-1.0.3.mjs",
       "sha256": "137220f8105caa0fb8c1325672890da9b1f506d48502ea0a097c67c4609f6cb5",
+      "mature": false,
+      "kind": "tv",
+      "tier": "direct",
+      "enabledByDefault": true
+    },
+    {
+      "id": "vixsrc",
+      "label": "VixSrc (HLS)",
+      "version": "1.0.4",
+      "entry": "providers/tv/vixsrc-1.0.4.mjs",
+      "sha256": "e3d3ed2ba071a5aab79ef97ef661e522af4235fd138229193a96fdf7b41a8c87",
       "mature": false,
       "kind": "tv",
       "tier": "direct",
@@ -280,6 +377,15 @@
       "entry": "providers/anime/anizone-1.0.1.mjs",
       "sha256": "a5708689e79e16b08c941bb221c30ae4d4e56878363c21ae06a233d22a1aade4",
       "mature": false,
+      "proxy": {
+        "suffixes": [
+          ".streamzone1.site",
+          ".nekostream.site",
+          ".nukitashith.top",
+          ".aniwatchtv.site"
+        ],
+        "scrape": true
+      },
       "sub": "soft",
       "tier": "direct",
       "modes": [

@@ -77,6 +77,15 @@ is configured to allow that, everything else must be used.
   `{ "genre": true, "order": true, "studio": true, "sort": true,
 "pageSize": 24 }`. Filter values come from the module's `*_GENRES`,
   `*_TAGS`, `*_ORDERS` string-array exports (no registry change needed).
+- `proxy` (optional): upstream rules for `/api/proxy`, `/api/subtitle-proxy`,
+  `/api/image-proxy`, and `/api/embed-proxy` on the hosts the provider returns.
+  `{ "hosts": ["cdn.tld"], "suffixes": [".cdn.tld"], "referer": "https://...",
+"origin": "https://...", "originFromReferer": true, "scrape": true,
+"cfCookie": true, "mirrors": ["alt.cdn.tld"], "embedPatch": true }`.
+  `hosts` matches hostnames exactly, `suffixes` matches hostname endings (both
+  lowercase); `scrape` fetches through got-scraping, `mirrors` are tried
+  before the original host, `cfCookie` forwards `cf_clearance` cookies, and
+  `embedPatch` enables HTML patching for that host.
 - `enabledByDefault`: `false` ships the provider disabled.
 
 `sha.mjs` verifies and writes hashes (zero deps):
