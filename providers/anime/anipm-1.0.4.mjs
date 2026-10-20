@@ -128,13 +128,15 @@ export default function createProvider(ctx) {
       const variants = []
       const re = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
       let m
+      let idx = 0
       while ((m = re.exec(res.body)) !== null) {
+        const i = idx++
         const label =
           m[1].match(/NAME="([^"]+)"/)?.[1] || (m[1].match(/RESOLUTION=\d+x(\d+)/)?.[1] ?? '') + 'p'
         if (!label || label === 'p') continue
         variants.push({
           resolutionStr: label,
-          link: ctx.proxyUrl(new URL(m[2], source).href, EMBED_ORIGIN),
+          link: `${ctx.proxyUrl(source, EMBED_ORIGIN)}&variant=${i}`,
           hls: true,
           headers: { Referer: EMBED_ORIGIN },
         })

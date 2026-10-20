@@ -1,6 +1,6 @@
 {
-  "version": 51,
-  "updatedAt": "2026-10-20T13:00:00Z",
+  "version": 53,
+  "updatedAt": "2026-10-20T11:59:07Z",
   "providers": [
     {
       "id": "megaplay",
@@ -33,9 +33,9 @@
     {
       "id": "anipm",
       "label": "AniPM",
-      "version": "1.0.2",
-      "entry": "providers/anime/anipm-1.0.2.mjs",
-      "sha256": "9438e3116582089b43897ed90cd0a29c11bd4dd10923e66c49f6d2b9fe76066c",
+      "version": "1.0.4",
+      "entry": "providers/anime/anipm-1.0.4.mjs",
+      "sha256": "26c236ea5fffec640b26b61d5dfcdd8ccf27248918e018dcab34fe83c92efce3",
       "mature": false,
       "proxy": {
         "suffixes": [
