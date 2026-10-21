@@ -1,6 +1,6 @@
 {
-  "version": 54,
-  "updatedAt": "2026-10-20T16:41:38Z",
+  "version": 55,
+  "updatedAt": "2026-10-21T12:40:22Z",
   "providers": [
     {
       "id": "megaplay",
@@ -300,9 +300,9 @@
     {
       "id": "mangapill",
       "label": "MangaPill",
-      "version": "1.0.0",
-      "entry": "providers/manga/mangapill-1.0.0.mjs",
-      "sha256": "4f5ff5997af61061242fd7a2fe781357079837defe978f90673176997e97a8d4",
+      "version": "1.0.1",
+      "entry": "providers/manga/mangapill-1.0.1.mjs",
+      "sha256": "3b553b3f9c6b1da2f114f4cc2b47ea5b9076d9122baa7a904557b3e5d7560f27",
       "mature": false,
       "kind": "manga",
       "enabledByDefault": true

@@ -52,7 +52,7 @@ export default function createProvider(ctx) {
   }
 
   async function search(options) {
-    const { query = '', type = '', status = '' } = options
+    const { query = '', type = '', status = '', page = 1, sort = '' } = options
     const params = new URLSearchParams()
     if (query.trim()) params.set('q', query.trim())
     if (type) params.set('type', type)
@@ -60,11 +60,16 @@ export default function createProvider(ctx) {
     if ([...params.keys()].length === 0) {
       params.set('type', 'manga')
     }
-    const cacheKey = `manga-pill-search-${params.toString()}`
+    // the site has no sort parameter - "latest" is its own new-manga list,
+    // which cannot be filtered or paginated
+    const latest = sort === 'latest' && !query.trim() && !type && !status
+    if (!latest && page > 1) params.set('page', String(page))
+    const url = latest ? `${BASE}/mangas/new` : `${BASE}/search?${params.toString()}`
+    const cacheKey = `manga-pill-search-${sort}-${params.toString()}`
     const cached = cache.get(cacheKey)
     if (cached) return cached
     try {
-      const html = await fetchHtml(`${BASE}/search?${params.toString()}`)
+      const html = await fetchHtml(url)
       const $ = ctx.cheerio.load(html)
       const hrefs = new Set()
       $('a[href^="/manga/"]').each((_, el) => {
@@ -104,7 +109,8 @@ export default function createProvider(ctx) {
           genres: genres.slice(0, 6),
         })
       }
-      const result = { items, hasNext: false }
+      const hasNext = latest ? false : $('a[href*="page="]').length > 0
+      const result = { items, hasNext }
       cache.set(cacheKey, result, 300)
       return result
     } catch (err) {

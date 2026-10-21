@@ -16,15 +16,18 @@
 // AUTH (site demands cookie, rerun with --cookie) |
 // RATE-LIMITED (back off and rerun).
 // Exit code is 1 when any provider FAILs, needs AUTH, or is RATE-LIMITED.
-// No dependencies. cheerio is loaded lazily and only required when a
-// tested provider calls ctx.cheerio (animepahe, animeya):
+// No dependencies. cheerio is loaded on demand the first time a tested
+// provider calls ctx.cheerio (animepahe, animeya, mangapill, ...):
 //   npm install cheerio
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
+import { createRequire } from 'node:module'
 import readline from 'node:readline'
 import { pathToFileURL, fileURLToPath } from 'node:url'
+
+const require = createRequire(import.meta.url)
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url))
 const UA_DEFAULT =
@@ -105,12 +108,10 @@ if (wanted.some((p) => p.id === 'animepahe') && !opts.cookie && process.stdin.is
 }
 
 let cheerioMod = null
-let gotScrapingMod = null
-let gotScrapingTried = false
-async function getCheerio() {
+function getCheerio() {
   if (!cheerioMod) {
     try {
-      cheerioMod = await import('cheerio')
+      cheerioMod = require('cheerio')
     } catch {
       throw new Error('cheerio is required for this provider: run `npm install cheerio`')
     }
@@ -401,11 +402,7 @@ function makeCtx() {
       },
     },
     cheerio: {
-      load: (html) => {
-        if (!cheerioMod)
-          throw new Error('cheerio is required for this provider: run `npm install cheerio`')
-        return cheerioMod.load(html)
-      },
+      load: (html) => getCheerio().load(html),
     },
   }
 }
@@ -600,7 +597,6 @@ for (const entry of wanted) {
       results.push(fail('missing default factory export'))
       continue
     }
-    if (entry.id === 'animepahe' || entry.id === 'animeya') await getCheerio()
     const noteLines = [`sha ok${entry.sha256 ? '' : ' (unsigned)'}`]
     const factory = mod.default(makeCtx())
     if (entry.kind === 'manga') {
