@@ -1,6 +1,6 @@
 {
-  "version": 55,
-  "updatedAt": "2026-10-21T12:40:22Z",
+  "version": 57,
+  "updatedAt": "2026-10-25T10:56:54Z",
   "providers": [
     {
       "id": "megaplay",
@@ -332,9 +332,9 @@
     {
       "id": "embedmaster",
       "label": "EmbedMaster",
-      "version": "1.0.9",
-      "entry": "providers/tv/embedmaster-1.0.9.mjs",
-      "sha256": "53f38c3d206b368f5d186d2901e6f8d7450dded3ab696e7b7dbf269572e27f78",
+      "version": "1.1.0",
+      "entry": "providers/tv/embedmaster-1.1.0.mjs",
+      "sha256": "b11203420d1c5ab3d019ad1695dfb10176c31b081a42e60d259d3e6bff60688f",
       "mature": false,
       "kind": "tv",
       "tier": "direct",

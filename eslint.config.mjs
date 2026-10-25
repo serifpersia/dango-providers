@@ -17,7 +17,7 @@ export default [
     },
   },
   {
-    files: ['probe.mjs', 'sha.mjs'],
+    files: ['probe.mjs', 'sha.mjs', 'check-*.mjs', 'release.mjs', '*.test.mjs'],
     languageOptions: {
       globals: { ...globals.node },
     },

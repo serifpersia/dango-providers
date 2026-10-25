@@ -86,9 +86,13 @@ for (const entry of entries) {
     bytes = fixed
     row.note = 'crlf->lf'
   } else if (hasCr) {
-    row.note = 'has CRLF (hashes as LF; run --fix)'
+    row.status = 'CRLF'
+    row.note = 'run --fix before hashing'
+    failed++
+    rows.push(row)
+    continue
   }
-  const digest = sha256(normalize(bytes))
+  const digest = sha256(bytes)
   const current = String(entry.sha256 || '').toLowerCase()
   if (current === digest) {
     row.status = 'OK'
@@ -115,6 +119,7 @@ if (opts.write) {
   const changed = rows.filter((r) => r.status === 'UPDATED' || r.status === 'FILLED').length
   if (changed > 0) {
     registry.updatedAt = new Date().toISOString().replace(/\.\d+Z$/, 'Z')
+    registry.version++
     const raw = readFileSync(opts.registry, 'utf8')
     const indent = raw.match(/^ +"/m)?.[0].length - 1 || 2
     writeFileSync(opts.registry, JSON.stringify(registry, null, Math.min(indent, 8)) + '\n')
@@ -122,7 +127,7 @@ if (opts.write) {
   console.log(`${changed} entr${changed === 1 ? 'y' : 'ies'} updated`)
 }
 
-if (failed > 0 && !opts.write) {
+if (failed > 0) {
   console.log(`${failed} problem${failed === 1 ? '' : 's'} — rerun with --write to fix shas`)
   process.exit(1)
 }

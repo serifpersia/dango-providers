@@ -57,7 +57,9 @@ is configured to allow that, everything else must be used.
 }
 ```
 
-- `id`: lowercase `[a-z0-9-]`, unique. Same id as a built-in overrides it.
+- `id`: lowercase `[a-z0-9-]`, unique and stable across updates.
+- `minDango` (optional): minimum supported dango release, as `major.minor.patch`.
+  dango checks it before loading the module; set it when using a newer host API.
 - `entry`: absolute `https://` URL or path relative to `registry.json`.
   Omit it for template embeds (see `embedBase`).
 - `embedBase`: `https://` base URL for `{base}/movie/{id}` +
@@ -134,7 +136,13 @@ export default function createProvider(ctx) {
 }
 ```
 
-The factory may only use `ctx` — no dango imports, no Node builtins.
+Use `ctx` for dango services; do not import dango source files into providers.
+Modules are trusted Node code, not sandboxed plugins: Node imports and globals are
+available. A registry update has the same trust level as a server software update.
+Hashes verify bytes against the registry; they do not independently authenticate
+the publisher. Never evaluate upstream scripts on the dango event loop. EmbedMaster
+resolves sources in a worker, with bounded VM execution and a two-minute worker
+deadline; its worker is isolation from hangs, not a security sandbox.
 Typed contract: `ctx.d.ts` mirrors dango's `createCtx`. Convert modules
 on their next version bump only — never edit a pinned `.mjs` in place
 (that breaks its `sha256`); new versions get:
@@ -190,6 +198,31 @@ site demands a missing cookie; dango maps it to the login modal.
 
 Bump `version`, the filename, `registry.json: version`, and `sha256`
 together on every change.
+
+Prepare a new version without editing the published module:
+
+```sh
+npm run release -- embedmaster 1.1.1
+# Edit the newly created module, then:
+npm run sha:write
+npm run check
+npm run check:host # requires the sibling ../dango checkout and its dependencies
+```
+
+The release command copies the current module and updates its registry entry.
+Provider patch numbers run from 0 through 9: `1.0.9` is followed by `1.1.0`.
+Hash writes also bump the registry version when bytes change. Published modules
+must not be edited in place. Superseded files may be deleted once the current
+registry no longer references them; an old registry snapshot then needs its cached
+module or a registry refresh. `check:release` checks the working tree against
+HEAD; CI additionally compares with the pull request base or previous pushed commit.
+CI loads every factory with dango's real host context, checks `ctx.d.ts` against it,
+and runs deterministic tests. Live-site probes remain a separate manual check.
+
+dango keeps the latest validated registry separately from successfully loaded
+entries. Failed updates retain the working module and its matching proxy metadata
+across refreshes and restarts. Removing the last registry entry clears all providers.
+See dango's `docs/remote-providers.md` for the loader and recovery contract.
 
 ## probe.mjs
 

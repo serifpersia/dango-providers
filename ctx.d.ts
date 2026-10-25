@@ -27,10 +27,10 @@ export interface TitleMatcher {
   ): { item: TItem; score: number } | null
 }
 
-export interface AnilistResponse<T> {
-  data?: T
+export type AnilistResponse<T> = {
+  data: T | null
   errors?: Array<{ message: string }>
-}
+} | null
 
 export interface CtxRequestStore {
   get(key: RequestKey): string | undefined

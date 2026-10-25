@@ -1,4 +1,5 @@
 import vm from 'node:vm'
+import { Worker, workerData, parentPort } from 'node:worker_threads'
 
 const LINK = 'https://embedmaster.link'
 const ORIGIN = 'https://embdmstrplayer.com'
@@ -155,7 +156,7 @@ async function getSandbox(cfg) {
   ctx.window = ctx
   ctx.self = ctx
   ctx.__EM_PLAYER__ = cfg
-  vm.runInContext(await res.text(), ctx, { filename: 'em-crypto.min.js' })
+  vm.runInContext(await res.text(), ctx, { filename: 'em-crypto.min.js', timeout: 1000 })
   sandbox = ctx
   return ctx
 }
@@ -165,7 +166,9 @@ async function resolve(ctx, cfg, row) {
   let timer
   const data = await Promise.race([
     new Promise((done) => {
-      ctx.EMFetch(url, (err, d) => done(err ? null : d))
+      ctx.__EM_URL__ = url
+      ctx.__EM_DONE__ = (err, d) => done(err ? null : d)
+      vm.runInContext('EMFetch(__EM_URL__, __EM_DONE__)', ctx, { timeout: 1000 })
     }),
     new Promise((done) => {
       timer = setTimeout(() => done(null), TIMEOUT)
@@ -321,9 +324,38 @@ export default function createProvider() {
   return {
     name: 'embedmaster',
     servers: SERVERS,
-    getSources,
+    getSources: workerData?.dangoProvider === 'embedmaster' ? getSources : sourcesInWorker,
     getEmbedUrl: async (media) => embedPlayerUrl(media),
   }
+}
+
+function sourcesInWorker(media, server) {
+  return new Promise((done) => {
+    const worker = new Worker(new URL(import.meta.url), {
+      workerData: { dangoProvider: 'embedmaster', media, server },
+    })
+    const timer = setTimeout(() => finish(null), 120000)
+    let finished = false
+    function finish(value) {
+      if (finished) return
+      finished = true
+      clearTimeout(timer)
+      void worker.terminate()
+      done(value)
+    }
+    worker.once('message', finish)
+    worker.once('error', () => finish(null))
+    worker.once('exit', () => finish(null))
+  })
+}
+
+if (workerData?.dangoProvider === 'embedmaster') {
+  createProvider()
+    .getSources(workerData.media, workerData.server)
+    .then(
+      (result) => parentPort.postMessage(result),
+      () => parentPort.postMessage(null)
+    )
 }
 
 function embedPlayerUrl(media) {
