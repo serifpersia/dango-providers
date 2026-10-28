@@ -210,7 +210,9 @@ npm run check:host # requires the sibling ../dango checkout and its dependencies
 ```
 
 The release command copies the current module and updates its registry entry.
-Provider patch numbers run from 0 through 9: `1.0.9` is followed by `1.1.0`.
+Always bump to the next patch of the provider's current version: `1.0.0` →
+`1.0.1`, then `1.0.2`. Patch numbers run from 0 through 9; only `1.0.9` is
+followed by `1.1.0`. Never jump a minor version early.
 Hash writes also bump the registry version when bytes change. Published modules
 must not be edited in place. Superseded files may be deleted once the current
 registry no longer references them; an old registry snapshot then needs its cached
