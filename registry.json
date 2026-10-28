@@ -1,6 +1,6 @@
 {
-  "version": 63,
-  "updatedAt": "2026-10-28T16:11:15Z",
+  "version": 65,
+  "updatedAt": "2026-10-28T16:23:24Z",
   "providers": [
     {
       "id": "megaplay",
@@ -242,9 +242,9 @@
     {
       "id": "op",
       "label": "OP",
-      "version": "1.0.1",
-      "entry": "providers/anime/op-1.0.1.mjs",
-      "sha256": "ba1a7071b5bfc53e73d281eeea3d318ed93da3b28682f20dd50da46469cd155b",
+      "version": "1.0.2",
+      "entry": "providers/anime/op-1.0.2.mjs",
+      "sha256": "e6375c1237179507350adc96d776e6d611a67ca94334c143f00efe611e74915e",
       "mature": true,
       "proxy": {
         "hosts": [

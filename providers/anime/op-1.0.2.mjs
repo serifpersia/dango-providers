@@ -142,18 +142,6 @@ function parseResolutions(value) {
   return map
 }
 
-function resolutionLabel(key) {
-  return key === '4k' ? '4K' : `${key}p`
-}
-
-function labelFor(map, ext) {
-  if (map['4k']) return '4K'
-  const keys = Object.keys(map)
-    .filter((key) => map[key] === ext)
-    .sort((a, b) => (parseFloat(b) || 0) - (parseFloat(a) || 0))
-  return keys.length ? resolutionLabel(keys[0]) : ext === 'mp4' ? '720p' : '4K'
-}
-
 function seriesQuery(showId) {
   return showId.replace(/-/g, ' ').replace(/~/g, '-')
 }
@@ -251,19 +239,6 @@ async function fetchText(url) {
   })
   if (!res.ok) return null
   return res.text()
-}
-
-async function exists(url) {
-  try {
-    const res = await fetch(url, {
-      method: 'HEAD',
-      headers: { 'User-Agent': UA, Referer: `${BASE_URL}/` },
-      signal: AbortSignal.timeout(10000),
-    })
-    return res.ok
-  } catch {
-    return false
-  }
 }
 
 export default function createProvider(ctx) {
@@ -412,20 +387,8 @@ export default function createProvider(ctx) {
       const resolutions = parseResolutions(resMatch?.[1] || '')
       const base = `${STORAGE_BASE}/${encodeURIComponent(actualFolder)}`
 
-      const candidates = await Promise.all(
-        ['webm', 'mp4'].map(async (ext) => ({ ext, ok: await exists(`${base}/ep.${ext}`) }))
-      )
-      const formats = candidates
-        .filter((candidate) => candidate.ok)
-        .map((candidate) => candidate.ext)
-      const available = formats.length ? formats : [resolutions['4k'] === 'mp4' ? 'mp4' : 'webm']
-
-      const links = available.map((ext) => ({
-        resolutionStr: labelFor(resolutions, ext),
-        link: `${base}/ep.${ext}`,
-        hls: false,
-      }))
-      links.sort((a, b) => parseInt(b.resolutionStr) - parseInt(a.resolutionStr))
+      const ext = resolutions['4k'] === 'mp4' ? 'mp4' : 'webm'
+      const links = [{ resolutionStr: 'Auto', link: `${base}/ep.${ext}`, hls: false }]
 
       const subtitles = []
       const trackRe = /<track\b[^>]*>/g
