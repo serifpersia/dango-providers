@@ -1,6 +1,6 @@
 {
-  "version": 65,
-  "updatedAt": "2026-10-28T16:23:24Z",
+  "version": 66,
+  "updatedAt": "2026-10-30T11:03:24Z",
   "providers": [
     {
       "id": "megaplay",
@@ -469,9 +469,9 @@
     {
       "id": "mkissa",
       "label": "MKissa",
-      "version": "1.0.0",
-      "entry": "providers/anime/mkissa-1.0.0.mjs",
-      "sha256": "7391d43cbd7bfd7126e301977f0a0fac0d8c89e0e2d23013923a72f3dd79ef4a",
+      "version": "1.0.1",
+      "entry": "providers/anime/mkissa-1.0.1.mjs",
+      "sha256": "cc8610554c2b9f3c00db8d00595fa89241c9f6bcc98a968be7e1af0f9b2d3eb6",
       "mature": false,
       "kind": "anime",
       "sub": "hard",

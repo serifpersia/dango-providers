@@ -349,11 +349,11 @@ class MkissaClient {
   constructor() {
     this.base = 'https://mkissa.to'
     this.api = 'https://api.mkissa.net'
-    // Public MKissa client build 179 protocol (not an account credential).
-    this.build = '179'
+    // Public MKissa client build 184 protocol (not an account credential).
+    this.build = '184'
     this.mask = [
-      181, 144, 93, 163, 157, 47, 234, 184, 123, 35, 102, 31, 45, 121, 26, 86, 5, 55, 17, 30, 137,
-      144, 24, 110, 64, 94, 214, 203, 199, 112, 25, 5,
+      163, 77, 136, 159, 65, 144, 229, 185, 106, 251, 0, 102, 63, 94, 160, 28, 70, 142, 147, 87,
+      247, 151, 132, 108, 171, 205, 97, 58, 81, 114, 58, 243,
     ]
   }
   getSettings() {
@@ -390,9 +390,9 @@ class MkissaClient {
     let failure
     for (const epoch of epochs) {
       try {
-        const intermediate = C.hmac(this.mask, C.utf8('KoCGqjW:' + this.build))
+        const intermediate = C.hmac(this.mask, C.utf8('5m1AiH:' + this.build))
         const signature = C.hex(
-          C.hmac(intermediate, C.utf8(this.build + '|mkissa|k7|' + epoch + '|mkissa.to'))
+          C.hmac(intermediate, C.utf8('mkissa.to/' + this.build + '/' + epoch + '/k7/mkissa'))
         )
         const response = await this.request(
           this.api + '/client-crypto/v1/bootstrap?buildId=' + this.build + '&k=k7',
