@@ -1,6 +1,6 @@
 {
-  "version": 88,
-  "updatedAt": "2026-11-05T01:17:48Z",
+  "version": 97,
+  "updatedAt": "2026-11-05T20:19:33Z",
   "providers": [
     {
       "id": "megaplay",
@@ -178,6 +178,23 @@
       "modes": [
         "sub",
         "dub"
+      ],
+      "enabledByDefault": true
+    },
+    {
+      "id": "hs",
+      "label": "HS",
+      "version": "1.0.0",
+      "entry": "providers/anime/hs-1.0.0.mjs",
+      "sha256": "9aa3a625b18837956d0f3de93fd707e0e49efbebec3f037a50b6014c3265405f",
+      "mature": true,
+      "tier": "direct",
+      "browse": {
+        "genre": true,
+        "order": true
+      },
+      "modes": [
+        "sub"
       ],
       "enabledByDefault": true
     },
