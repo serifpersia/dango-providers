@@ -1,6 +1,6 @@
 {
-  "version": 66,
-  "updatedAt": "2026-10-30T11:03:24Z",
+  "version": 88,
+  "updatedAt": "2026-11-05T01:17:48Z",
   "providers": [
     {
       "id": "megaplay",
@@ -479,6 +479,38 @@
       "modes": [
         "sub",
         "dub"
+      ],
+      "enabledByDefault": true
+    },
+    {
+      "id": "dh",
+      "label": "DH",
+      "version": "1.0.0",
+      "entry": "providers/anime/dh-1.0.0.mjs",
+      "sha256": "ed0efe5a82dfade0e827fafa9ddf08de82fbebdf0f447a558a43eb703c0d644a",
+      "mature": true,
+      "tier": "direct",
+      "browse": {
+        "genre": true
+      },
+      "modes": [
+        "sub"
+      ],
+      "enabledByDefault": true
+    },
+    {
+      "id": "hh",
+      "label": "HH",
+      "version": "1.0.0",
+      "entry": "providers/anime/hh-1.0.0.mjs",
+      "sha256": "0490fb7f7e8ef654d6c1f676f10cf29f4d5dc29c8f3ea18252a170d629d345ce",
+      "mature": true,
+      "tier": "direct",
+      "browse": {
+        "genre": true
+      },
+      "modes": [
+        "sub"
       ],
       "enabledByDefault": true
     }
