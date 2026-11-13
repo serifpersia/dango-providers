@@ -1,0 +1,45 @@
+name: Check providers
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: providers
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm ci
+        working-directory: providers
+      - run: npm run check
+        working-directory: providers
+      - name: Check published versions against the base commit
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node check-release.mjs "$BASE_SHA"
+        working-directory: providers
+      - uses: actions/checkout@v6
+        with:
+          repository: serifpersia/dango
+          path: dango
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: dango/package.json
+      - run: pnpm install --frozen-lockfile
+        working-directory: dango
+      - name: Check the actual dango loader and host contract
+        run: node --import tsx ../../providers/check-host.mjs ..
+        working-directory: dango/server

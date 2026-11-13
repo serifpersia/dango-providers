@@ -1,0 +1,238 @@
+# dango-providers
+
+Remote provider registry for [dango](https://github.com/serifpersia/dango).
+dango fetches `registry.json`, verifies each `sha256`, loads the modules.
+Push here to ship provider fixes - no dango release needed.
+
+## Layout
+
+```text
+registry.json
+ctx.d.ts
+sha.mjs
+probe.mjs
+eslint.config.mjs
+providers/
+  anime/    video providers
+  manga/    manga providers
+  asmr/     audio providers
+  tv/       TV providers
+```
+
+## Checks
+
+```sh
+npm install
+npm run check          # eslint + prettier --check + sha.mjs
+npm run lint           # eslint .        (lint:fix to autofix)
+npm run format         # prettier --write .
+npm run sha:write      # recompute shas after editing a provider
+```
+
+Format/lint before pushing: `registry.json` is excluded from prettier
+because `sha.mjs --write` owns its formatting. Unused contract params are
+prefixed with `_` (`getEpisodes(showId, _mode)`); eslint's `no-unused-vars`
+is configured to allow that, everything else must be used.
+
+## registry.json
+
+```json
+{
+  "version": 1,
+  "updatedAt": "2026-01-01T00:00:00Z",
+  "providers": [
+    {
+      "id": "provider-id",
+      "label": "Provider Label",
+      "version": "1.0.0",
+      "entry": "providers/kind/provider-id-1.0.0.mjs",
+      "sha256": "<64 hex chars>",
+      "sub": "soft",
+      "tier": "direct",
+      "modes": ["sub", "dub"],
+      "enabledByDefault": true
+    }
+  ]
+}
+```
+
+- `id`: lowercase `[a-z0-9-]`, unique and stable across updates.
+- `minDango` (optional): minimum supported dango release, as `major.minor.patch`.
+  dango checks it before loading the module; set it when using a newer host API.
+- `entry`: absolute `https://` URL or path relative to `registry.json`.
+  Omit it for template embeds (see `embedBase`).
+- `embedBase`: `https://` base URL for `{base}/movie/{id}` +
+  `{base}/tv/{id}/{season}/{episode}` TV embeds. No module file, no
+  `sha256` - dango builds the provider from the registry row.
+- `sha256`: hex digest of the exact `.mjs` bytes (LF-normalized). Required
+  unless `embedBase` is set.
+- `kind`: `anime` (default), `asmr`, `manga`, or `tv`. Manga modules implement
+  `search/getDetail/getChapters/getPages`; TV modules implement
+  `getSources(media, server?)` and/or `getEmbedUrl(media)`.
+- `sub`: `soft | hard | mixed`.
+- `tier`: `direct | embed | cookie`.
+- `modes`: subset of `["sub", "dub"]` (defaults to both).
+- `browse` (optional): declares which browse filters dango renders -
+  `{ "genre": true, "order": true, "studio": true, "sort": true,
+"pageSize": 24 }`. Filter values come from the module's `*_GENRES`,
+  `*_TAGS`, `*_ORDERS` string-array exports (no registry change needed).
+- `proxy` (optional): upstream rules for `/api/proxy`, `/api/subtitle-proxy`,
+  `/api/image-proxy`, and `/api/embed-proxy` on the hosts the provider returns.
+  `{ "hosts": ["cdn.tld"], "suffixes": [".cdn.tld"], "referer": "https://...",
+"origin": "https://...", "originFromReferer": true, "scrape": true,
+"cfCookie": true, "mirrors": ["alt.cdn.tld"], "embedPatch": true }`.
+  `hosts` matches hostnames exactly, `suffixes` matches hostname endings (both
+  lowercase); `scrape` fetches through got-scraping, `mirrors` are tried
+  before the original host, `cfCookie` forwards `cf_clearance` cookies, and
+  `embedPatch` enables HTML patching for that host.
+- `enabledByDefault`: `false` ships the provider disabled.
+
+`sha.mjs` verifies and writes hashes (zero deps):
+
+```sh
+node sha.mjs                  # verify every entry, exit 1 on mismatch
+node sha.mjs <id> [id...]     # verify specific ids only
+node sha.mjs --write          # fill in computed shas, bump updatedAt
+node sha.mjs --write --fix    # also convert CRLF working copies to LF first
+```
+
+## Provider modules
+
+Default factory export receiving the host context:
+
+```js
+export default function createProvider(ctx) {
+  return {
+    name: 'example',
+    search: async (options) => [],
+    getEpisodes: async (showId, mode) => null,
+    getStreamUrls: async (showId, episode, mode) => null,
+    resolveShowId: async (title) => null,
+  }
+}
+```
+
+TV modules resolve by TMDB id. `media` is
+`{ tmdbId, type: 'movie'|'tv', season, episode, title, year, imdbId,
+totalSeasons }` - never pass the TMDB key, use `ctx.tmdb.get(path)`:
+
+```js
+export default function createProvider(ctx) {
+  return {
+    name: 'example-tv',
+    servers: ['server-a', 'server-b'],
+    getSources: async (media, server) => ({
+      sources: [{ url, quality, type: 'hls' }],
+      audioTracks: [{ language, label }],
+      subtitles: [{ language, label, url }],
+      referer: 'https://...',
+      server,
+    }),
+    getEmbedUrl: async (media) => 'https://...',
+  }
+}
+```
+
+Use `ctx` for dango services; do not import dango source files into providers.
+Modules are trusted Node code, not sandboxed plugins: Node imports and globals are
+available. A registry update has the same trust level as a server software update.
+Hashes verify bytes against the registry; they do not independently authenticate
+the publisher. Never evaluate upstream scripts on the dango event loop. Any worker/VM
+isolation a provider uses is for hang isolation, not a security sandbox.
+Typed contract: `ctx.d.ts` mirrors dango's `createCtx`. Convert modules
+on their next version bump only - never edit a pinned `.mjs` in place
+(that breaks its `sha256`); new versions get:
+
+```js
+// @ts-check
+/// <reference path="../../ctx.d.ts" />
+export default function createProvider(
+  /** @type {import('../../ctx.js').RemoteCtx} */ ctx
+) {
+```
+
+Check new versions with `tsc --noEmit --allowJs --checkJs`. Keep `ctx.d.ts`
+hand-synced on every `createCtx` change.
+
+- `ctx.cache.get(key)` / `ctx.cache.set(key, value, ttlSeconds?)`
+- `ctx.logger.{info,warn,error,debug}(obj, msg?)`
+- `ctx.fetchText(url, init?)` -> `string | null`
+- `ctx.fetchJson(url, init?)` -> parsed JSON (throws on HTTP error)
+- `ctx.tmdb.get(path)` -> TMDB JSON or `null`;
+  `ctx.tmdb.base` / `ctx.tmdb.image` are the API/image roots
+- `ctx.proxyUrl(rawUrl, referer)` -> `/api/proxy?...` URL
+- `ctx.userAgent`
+- `ctx.titleMatch.buildQueryVariants(title, romaji?)` /
+  `ctx.titleMatch.pickBestMatch(items, targets)`
+- `ctx.resolveBestShowId(title, romaji?, searchFn)` - runs the
+  variants loop for you; `searchFn(variant)` returns
+  `[{ title, id }]`. Prefer it over a hand-rolled loop.
+- `ctx.anilist.request(query, vars?)`, `ctx.anilist.parseMalId(id)`,
+  `ctx.anilist.searchByTitle(title)`
+- `ctx.kitsu.metaByAnilistId(anilistId)`
+- `ctx.cookies.sanitizeCfClearance(raw)` /
+  `ctx.cookies.buildCfClearanceCookie(raw)`
+- `ctx.crypto.aes256CbcDecryptJson(b64url, keyUtf8, ivUtf8)` /
+  `ctx.crypto.hmacSha256Base64Url(key, message)`
+- `ctx.scraping.fetch(urlOrOptions, maybeOptions?)` ->
+  `{ statusCode, body, headers }`
+- `ctx.curl.getJson(url, headers?)` / `ctx.curl.getText(url, headers?)` ->
+  `null` unless HTTP 200
+- `ctx.cheerio.load(html)`
+
+Per-request auth state - `ctx.request.get(key)`: dango may populate request-scoped keys from client headers for providers that need them (e.g. user agent/cookie pairs). Check provider-specific handling for supported keys. Throw `new Error('AUTH_REQUIRED')` when a site demands a missing credential; dango maps it to the login flow.
+
+Bump `version`, the filename, `registry.json: version`, and `sha256`
+together on every change.
+
+Prepare a new version without editing the published module:
+
+```sh
+npm run release -- <id> <version>
+# Edit the newly created module, then:
+npm run sha:write
+npm run check
+npm run check:host # requires the sibling ../dango checkout and its dependencies
+```
+
+The release command copies the current module and updates its registry entry.
+Always bump to the next patch of the provider's current version: `1.0.0` ->
+`1.0.1`, then `1.0.2`. Patch numbers run from 0 through 9; only `1.0.9` is
+followed by `1.1.0`. Never jump a minor version early.
+Hash writes also bump the registry version when bytes change. Published modules
+must not be edited in place. Superseded files may be deleted once the current
+registry no longer references them; an old registry snapshot then needs its cached
+module or a registry refresh. `check:release` checks the working tree against
+HEAD; CI additionally compares with the pull request base or previous pushed commit.
+CI loads every factory with dango's real host context, checks `ctx.d.ts` against it,
+and runs deterministic tests. Live-site probes remain a separate manual check.
+
+dango keeps the latest validated registry separately from successfully loaded
+entries. Failed updates retain the working module and its matching proxy metadata
+across refreshes and restarts. Removing the last registry entry clears all providers.
+See dango's `docs/remote-providers.md` for the loader and recovery contract.
+
+## probe.mjs
+
+End-to-end test per registry entry (dango itself does no runtime testing):
+
+```sh
+node probe.mjs --list
+node probe.mjs <id> [id...] --title "Title"
+node probe.mjs <id> --ua "..." --cookie "..."
+node probe.mjs <tv-id> --tmdb <id> --type movie|tv
+```
+
+Options: `[ids...]`, `--title`, `--episode N`, `--mode sub|dub`,
+`--ua`, `--cookie`, `--timeout MS`, `--json`, TV-only `--tmdb ID`,
+`--type movie|tv`, `--season N`, `--server NAME`. TV lookup needs
+`TMDB_API_KEY` (falls back to a public dev key). Exit code 1 on any
+`FAIL`/`AUTH`/`RATE-LIMITED`.
+
+Statuses: `PASS` | `FAIL` (+ reason) | `SKIP` (no results - rerun with a
+better `--title`) | `AUTH` (site demands a cookie) | `RATE-LIMITED`.
+
+The probe mirrors dango's host context except `scraping.fetch` (plain
+`fetch`, no got-scraping fingerprints) and the title matcher (compact
+equivalent). `cheerio` and `got-scraping` are devDependencies - `npm install`
+covers them.

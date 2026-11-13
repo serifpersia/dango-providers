@@ -1,0 +1,430 @@
+{
+    "version":  70,
+    "updatedAt":  "2026-11-13T22:02:39Z",
+    "providers":  [
+                      {
+                          "id":  "megaplay",
+                          "label":  "MegaPlay",
+                          "version":  "1.0.3",
+                          "entry":  "providers/anime/megaplay-1.0.3.mjs",
+                          "sha256":  "5fdb04adf7b9f9b72ac742628f36b44c64018b86fe8400690e08d40683c6203a",
+                          "mature":  false,
+                          "sub":  "soft",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "proxy":  {
+                                        "suffixes":  [
+                                                         ".quavex.top",
+                                                         ".nexabloom.top",
+                                                         ".hiddenvertex.top",
+                                                         ".ironhorizon.top",
+                                                         ".solarhaven.top"
+                                                     ],
+                                        "mirrors":  [
+                                                        "fetch.nexabloom.top"
+                                                    ],
+                                        "origin":  "https://megaplay.buzz"
+                                    },
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "anipm",
+                          "label":  "AniPM",
+                          "version":  "1.0.4",
+                          "entry":  "providers/anime/anipm-1.0.4.mjs",
+                          "sha256":  "26c236ea5fffec640b26b61d5dfcdd8ccf27248918e018dcab34fe83c92efce3",
+                          "mature":  false,
+                          "proxy":  {
+                                        "suffixes":  [
+                                                         ".settlar.io"
+                                                     ],
+                                        "scrape":  true
+                                    },
+                          "sub":  "mixed",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "justanime",
+                          "label":  "JustAnime",
+                          "version":  "1.0.1",
+                          "entry":  "providers/anime/justanime-1.0.1.mjs",
+                          "sha256":  "61df362af85d67b129097f3c40b0df091312ead5a6c95f86afbf2b644801c5f0",
+                          "mature":  false,
+                          "sub":  "mixed",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "animegg",
+                          "label":  "AnimeGG",
+                          "version":  "1.0.1",
+                          "entry":  "providers/anime/animegg-1.0.1.mjs",
+                          "sha256":  "1a116624049b73aaf02caafc468a06fd7acd8f67b46a9d249e46871d9ba631f4",
+                          "mature":  false,
+                          "sub":  "hard",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "kaa",
+                          "label":  "KickAssAnime",
+                          "version":  "1.0.0",
+                          "entry":  "providers/anime/kickassanime-1.0.0.mjs",
+                          "sha256":  "08c997309251ca48bbeb2a4fc34c6bada87630433a1878559d3411ebc68c0f5e",
+                          "mature":  false,
+                          "proxy":  {
+                                        "hosts":  [
+                                                      "hls.krussdomi.com",
+                                                      "subst.krussdomi.com",
+                                                      "krussdomi.com",
+                                                      "st1.advancedairesearchlab.xyz",
+                                                      "st1.habibikun.xyz",
+                                                      "st1.babybayw.xyz",
+                                                      "st1.narutokun.xyz"
+                                                  ],
+                                        "referer":  "https://krussdomi.com/",
+                                        "origin":  "https://krussdomi.com"
+                                    },
+                          "sub":  "soft",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "animepahe",
+                          "label":  "AnimePahe",
+                          "version":  "1.0.2",
+                          "entry":  "providers/anime/animepahe-1.0.2.mjs",
+                          "sha256":  "b1378f3338c1aa00cf2fa22cc903d94d2b279ec736e6fae7fe6594f0a0595c08",
+                          "mature":  false,
+                          "proxy":  {
+                                        "hosts":  [
+                                                      "animepahe.pw",
+                                                      "animepahe.ru",
+                                                      "kwik.cx",
+                                                      "kwik.si",
+                                                      "kwik.pro"
+                                                  ],
+                                        "suffixes":  [
+                                                         ".uwucdn.top",
+                                                         ".owocdn.top",
+                                                         ".animepahe.pw",
+                                                         ".animepahe.ru"
+                                                     ],
+                                        "referer":  "https://animepahe.pw/",
+                                        "origin":  "https://animepahe.pw",
+                                        "originFromReferer":  true,
+                                        "scrape":  true,
+                                        "cfCookie":  true,
+                                        "embedPatch":  true
+                                    },
+                          "sub":  "hard",
+                          "tier":  "cookie",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "animeya",
+                          "label":  "Animeya",
+                          "version":  "1.0.3",
+                          "entry":  "providers/anime/animeya-1.0.3.mjs",
+                          "sha256":  "4fdeb1abce24153fb0f18aafa384e8b9dbf7366003afd852a400c8408585d22d",
+                          "mature":  false,
+                          "proxy":  {
+                                        "suffixes":  [
+                                                         ".animeya.cc"
+                                                     ],
+                                        "referer":  "https://animeya.cc/"
+                                    },
+                          "sub":  "mixed",
+                          "tier":  "embed",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "123anime",
+                          "label":  "123Anime",
+                          "version":  "1.0.0",
+                          "entry":  "providers/anime/123anime-1.0.0.mjs",
+                          "sha256":  "64683f90e365c78f2384089a3d1fcd0b0e87be1cb98e49ccedefdea9d01fe764",
+                          "mature":  false,
+                          "sub":  "hard",
+                          "tier":  "embed",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "jasmr",
+                          "label":  "JapaneseASMR",
+                          "version":  "1.0.0",
+                          "entry":  "providers/asmr/japaneseasmr-1.0.0.mjs",
+                          "sha256":  "294d2ee3bbd942d2463599066da9e1f35f02fd8ea7e53421ec81d9c33fafaacd",
+                          "mature":  false,
+                          "proxy":  {
+                                        "suffixes":  [
+                                                         ".weeabo0.xyz",
+                                                         ".weeab0o.xyz",
+                                                         ".japaneseasmr.com"
+                                                     ],
+                                        "referer":  "https://japaneseasmr.com/",
+                                        "scrape":  true,
+                                        "cfCookie":  true
+                                    },
+                          "kind":  "asmr",
+                          "tier":  "direct",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "mangadex",
+                          "label":  "MangaDex",
+                          "version":  "1.0.0",
+                          "entry":  "providers/manga/mangadex-1.0.0.mjs",
+                          "sha256":  "0444587fba3cf7880c8ab1e03a2ba8b36b2c8fa0924bc17f6f345e2bad429049",
+                          "mature":  false,
+                          "kind":  "manga",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "mangapill",
+                          "label":  "MangaPill",
+                          "version":  "1.0.1",
+                          "entry":  "providers/manga/mangapill-1.0.1.mjs",
+                          "sha256":  "3b553b3f9c6b1da2f114f4cc2b47ea5b9076d9122baa7a904557b3e5d7560f27",
+                          "mature":  false,
+                          "kind":  "manga",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "cinejoy",
+                          "label":  "CineJoy",
+                          "version":  "1.0.0",
+                          "entry":  "providers/tv/cinejoy-1.0.0.mjs",
+                          "sha256":  "3d5072e51da0892944226cc259389798bbdc1e330b44d1b75b19dc54da042386",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "direct",
+                          "enabledByDefault":  true,
+                          "proxy":  {
+                                        "hosts":  [
+                                                      "lightspeed.st",
+                                                      "ferb.st",
+                                                      "shegu.net",
+                                                      "bright67.online",
+                                                      "subtitles.vidy.st"
+                                                  ],
+                                        "suffixes":  [
+                                                         ".lightspeed.st",
+                                                         ".ferb.st",
+                                                         ".shegu.net",
+                                                         ".bright67.online",
+                                                         ".vidy.st"
+                                                     ],
+                                        "referer":  "https://cinejoy.pk/",
+                                        "origin":  "https://cinejoy.pk"
+                                    }
+                      },
+                      {
+                          "id":  "movybz",
+                          "label":  "Movy",
+                          "version":  "1.0.3",
+                          "entry":  "providers/tv/movy-1.0.3.mjs",
+                          "sha256":  "137220f8105caa0fb8c1325672890da9b1f506d48502ea0a097c67c4609f6cb5",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "direct",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "vixsrc",
+                          "label":  "VixSrc (HLS)",
+                          "version":  "1.0.4",
+                          "entry":  "providers/tv/vixsrc-1.0.4.mjs",
+                          "sha256":  "e3d3ed2ba071a5aab79ef97ef661e522af4235fd138229193a96fdf7b41a8c87",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "direct",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "embedmaster",
+                          "label":  "EmbedMaster",
+                          "version":  "1.1.1",
+                          "entry":  "providers/tv/embedmaster-1.1.1.mjs",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "direct",
+                          "enabledByDefault":  true,
+                          "sha256":  "26abf0e7d93d27ce9b2bfa3660d95358275651c110efbb06e07153ba8a364f78"
+                      },
+                      {
+                          "id":  "vidfast",
+                          "label":  "VidFast",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://vidfast.pro",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "videasy",
+                          "label":  "VidEasy",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://player.videasy.to",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "vidrock",
+                          "label":  "VidRock",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://vidrock.ru",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "anizone",
+                          "label":  "AniZone",
+                          "version":  "1.0.1",
+                          "entry":  "providers/anime/anizone-1.0.1.mjs",
+                          "sha256":  "a5708689e79e16b08c941bb221c30ae4d4e56878363c21ae06a233d22a1aade4",
+                          "mature":  false,
+                          "proxy":  {
+                                        "suffixes":  [
+                                                         ".streamzone1.site",
+                                                         ".nekostream.site",
+                                                         ".nukitashith.top",
+                                                         ".aniwatchtv.site"
+                                                     ],
+                                        "scrape":  true
+                                    },
+                          "sub":  "soft",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub"
+                                    ],
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "vidlink",
+                          "label":  "VidLink",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://vidlink.pro",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "moviesapi",
+                          "label":  "MoviesAPI",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://moviesapi.to",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "vidnest",
+                          "label":  "VidNest",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://vidnest.fun",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "vidzee",
+                          "label":  "VidZee",
+                          "version":  "1.0.0",
+                          "embedBase":  "https://player.vidzee.wtf/embed",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "cinesrc",
+                          "label":  "CineSrc",
+                          "version":  "1.0.0",
+                          "entry":  "providers/tv/cinesrc-1.0.0.mjs",
+                          "sha256":  "449b17f947672a716b63a48be6f45574c55c25720f8fc824d68a50480c5aeaf6",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "ythd",
+                          "label":  "YTHD",
+                          "version":  "1.0.0",
+                          "entry":  "providers/tv/ythd-1.0.0.mjs",
+                          "sha256":  "04c63b8e4e4d794445b73e2345190174212fdb0b673c0d8a33305ec7d9bb724b",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "rive",
+                          "label":  "RiveStream",
+                          "version":  "1.0.0",
+                          "entry":  "providers/tv/rivestream-1.0.0.mjs",
+                          "sha256":  "61f3b6766f3048dd9344dfa8614dcb5602b731f5e1f9c77543c8cce96b385fd6",
+                          "mature":  false,
+                          "kind":  "tv",
+                          "tier":  "embed",
+                          "enabledByDefault":  true
+                      },
+                      {
+                          "id":  "mkissa",
+                          "label":  "MKissa",
+                          "version":  "1.0.2",
+                          "entry":  "providers/anime/mkissa-1.0.2.mjs",
+                          "sha256":  "010ddece7736b8ad979e387fc9285f9b96dd26e8a04e0e1dea0be69d5b0e1c7b",
+                          "mature":  false,
+                          "kind":  "anime",
+                          "sub":  "hard",
+                          "tier":  "direct",
+                          "modes":  [
+                                        "sub",
+                                        "dub"
+                                    ],
+                          "enabledByDefault":  true
+                      }
+                  ]
+}
