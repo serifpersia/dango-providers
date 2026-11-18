@@ -439,6 +439,7 @@ export default function createProvider(ctx) {
     const links = []
     for (const s of sources) {
       if (s.file.includes('.m3u8')) {
+        let hasAltAudio = false
         try {
           const signedMaster = signNexabloomMasterUrl(s.file)
           const masterRes = await fetch(signedMaster, {
@@ -451,25 +452,28 @@ export default function createProvider(ctx) {
           })
           if (masterRes.ok) {
             const playlist = await masterRes.text()
-            const variantRe = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
-            let m
-            while ((m = variantRe.exec(playlist)) !== null) {
-              const attrs = m[1]
-              const label =
-                attrs.match(/NAME="([^"]+)"/)?.[1] ||
-                (attrs.match(/RESOLUTION=\d+x(\d+)/)?.[1] ?? '') + 'p' ||
-                ''
-              if (!label || label === 'p') continue
-              const variantUrl = new URL(m[2], s.file).href
-              links.push({
-                resolutionStr: label,
-                link: variantUrl,
-                hls: true,
-                headers: {
-                  Referer: 'https://megaplay.buzz/',
-                  'User-Agent': megaPlayHeaders['User-Agent'],
-                },
-              })
+            hasAltAudio = /#EXT-X-MEDIA:[^\n]*TYPE=AUDIO/i.test(playlist)
+            if (!hasAltAudio) {
+              const variantRe = /#EXT-X-STREAM-INF:([^\n]*)\n(\S+)/g
+              let m
+              while ((m = variantRe.exec(playlist)) !== null) {
+                const attrs = m[1]
+                const label =
+                  attrs.match(/NAME="([^"]+)"/)?.[1] ||
+                  (attrs.match(/RESOLUTION=\d+x(\d+)/)?.[1] ?? '') + 'p' ||
+                  ''
+                if (!label || label === 'p') continue
+                const variantUrl = new URL(m[2], s.file).href
+                links.push({
+                  resolutionStr: label,
+                  link: variantUrl,
+                  hls: true,
+                  headers: {
+                    Referer: 'https://megaplay.buzz/',
+                    'User-Agent': megaPlayHeaders['User-Agent'],
+                  },
+                })
+              }
             }
           }
         } catch {}
